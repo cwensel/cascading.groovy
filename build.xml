@@ -1,0 +1,261 @@
+<?xml version="1.0"?>
+
+<!--
+  ~ Copyright (c) 2008, Your Corporation. All Rights Reserved.
+  -->
+
+<project name="cascadingsh" default="build" basedir=".">
+
+  <!-- load properties first -->
+  <!--<property file="${user.home}/${name}.build.properties" />-->
+  <property file="${basedir}/build.properties"/>
+  <property file="${basedir}/version.properties"/>
+
+  <property environment="env"/>
+
+  <property name="cascadingsh.release.version" value="x.y.z"/>
+
+  <!-- these are optional, only used if you uncomment the project.class.path filesets below -->
+  <property name="hadoop.root" location="${basedir}/../hadoop"/>
+  <property name="hadoop.lib" location="${hadoop.root}/lib"/>
+
+
+  <property name="groovy.root" location="${env.GROOVY_HOME}"/>
+  <property name="groovy.lib" location="${groovy.root}/lib"/>
+  <property name="groovy.user" location="${user.home}/.groovy"/>
+  <property name="groovy.user.lib" location="${groovy.user}/lib"/>
+
+  <!-- assumes Cascading shares the same parent directory, change if necessary -->
+  <property name="cascading.root" location="${basedir}/../cascading"/>
+  <property file="${cascading.root}/version.properties"/>
+  <property name="cascading.release.version" value="x.y.z"/>
+  <property name="cascading.all.filename" value="cascading-${cascading.release.version}.jar"/>
+  <property name="cascading.filename" value="cascading-lib-${cascading.release.version}.jar"/>
+  <property name="cascading.libs" value="${cascading.root}/lib"/>
+
+  <condition property="cascading.lib" value="${cascading.root}/${cascading.filename}"
+             else="${cascading.root}/build/${cascading.filename}">
+    <available file="${cascading.root}/${cascading.filename}"/>
+  </condition>
+
+  <condition property="cascading.all.lib" value="${cascading.root}/${cascading.all.filename}"
+             else="${cascading.root}/build/${cascading.all.filename}">
+    <available file="${cascading.root}/${cascading.all.filename}"/>
+  </condition>
+
+  <property name="src.java" location="${basedir}/src/java"/>
+  <property name="src.groovy" location="${basedir}/src/groovy"/>
+  <property name="src.script" location="${basedir}/src/script"/>
+  <property name="src.test" location="${basedir}/src/test"/>
+
+  <available file="${src.java}" type="dir" property="main.available"/>
+  <available file="${src.test}" type="dir" property="test.available"/>
+
+  <property name="conf.dir" location="${hadoop.root}/conf"/>
+
+  <property name="lib.dir" location="${basedir}/lib"/>
+
+  <property name="javac.debug" value="false"/>
+
+  <property name="build.dir" location="${basedir}/build/"/>
+  <property name="build.classes" location="${build.dir}/classes"/>
+  <property name="build.test" location="${build.dir}/test"/>
+
+  <property name="test.results" location="${build.dir}/testresults"/>
+  <property name="test.showoutput" value="yes"/>
+
+  <property name="dist" location="dist"/>
+
+  <path id="project.class.path">
+    <pathelement location="${build.classes}"/>
+    <pathelement location="${build.test}"/>
+    <pathelement location="${cascading.lib}"/>
+
+    <fileset dir="${lib.dir}">
+      <include name="*.jar"/>
+    </fileset>
+
+    <fileset dir="${cascading.libs}">
+      <include name="*.jar"/>
+    </fileset>
+
+    <fileset dir="${hadoop.lib}">
+      <include name="*.jar"/>
+    </fileset>
+
+    <fileset dir="${hadoop.root}">
+      <include name="*-core.jar"/>
+    </fileset>
+
+    <fileset dir="${hadoop.root}/build">
+      <include name="*-core.jar"/>
+    </fileset>
+
+    <fileset dir="${groovy.lib}">
+      <include name="*.jar"/>
+    </fileset>
+
+  </path>
+
+  <!-- sets up environment -->
+  <target name="init">
+    <echo message="initializing cascading environment..."/>
+
+    <mkdir dir="${build.classes}"/>
+    <mkdir dir="${build.test}"/>
+    <mkdir dir="${test.results}"/>
+
+    <property name="CLASSPATH" refid="project.class.path"/>
+    <echo message="${CLASSPATH}"/>
+  </target>
+
+  <target name="clean">
+
+    <echo message="cleaning..."/>
+    <delete dir="${build.dir}"/>
+    <delete dir="${dist}"/>
+    <delete dir="${ant.project.name}.tgz"/>
+
+  </target>
+
+  <target name="build" depends="init">
+
+    <taskdef name="groovyc" classname="org.codehaus.groovy.ant.Groovyc" classpathref="project.class.path"/>
+
+    <echo message="building..."/>
+    <echo message="using cascading lib: ${cascading.lib}"/>
+    <mkdir dir="${build.classes}"/>
+    <mkdir dir="${build.test}"/>
+    <mkdir dir="${lib.dir}"/>
+
+    <javac srcdir="${src.java}" destdir="${build.classes}" verbose="off">
+      <classpath refid="project.class.path"/>
+    </javac>
+
+    <groovyc srcdir="${src.groovy}" destdir="${build.classes}" verbose="off">
+      <classpath refid="project.class.path"/>
+      <javac source="1.5" target="1.5" debug="${javac.debug}"/>
+    </groovyc>
+
+    <copy todir="${build.classes}">
+      <fileset dir="${src.java}">
+        <exclude name="**/*.java"/>
+      </fileset>
+      <fileset dir="${src.groovy}">
+        <exclude name="**/*.java"/>
+      </fileset>
+    </copy>
+
+    <javac srcdir="${src.test}" destdir="${build.test}" verbose="off" debug="${javac.debug}">
+      <classpath refid="project.class.path"/>
+    </javac>
+
+    <groovyc srcdir="${src.test}" destdir="${build.test}" verbose="off">
+      <classpath refid="project.class.path"/>
+      <javac source="1.5" target="1.5" debug="${javac.debug}"/>
+    </groovyc>
+
+    <copy todir="${build.test}">
+      <fileset dir="${src.test}">
+        <exclude name="**/*.java"/>
+        <exclude name="**/*.groovy"/>
+      </fileset>
+    </copy>
+
+  </target>
+
+  <target name="test" depends="init, build">
+    <echo message="running all cascading tests..."/>
+
+    <junit printsummary="true" showoutput="${test.showoutput}" fork="yes" haltonerror="no" haltonfailure="no" dir="."
+           maxmemory="512m">
+
+      <sysproperty key="test.build.data" value="data"/>
+      <sysproperty key="hadoop.log.dir" value="build/test/log"/>
+
+      <classpath>
+        <path refid="project.class.path"/>
+        <pathelement path="${java.class.path}"/>
+      </classpath>
+      <formatter type="plain" usefile="true"/>
+
+      <test name="${testcase}" todir="${test.results}" if="testcase"/>
+      <batchtest todir="${test.results}" haltonfailure="true" unless="testcase">
+        <fileset dir="${build.test}">
+          <include name="**/*Test.class"/>
+        </fileset>
+      </batchtest>
+    </junit>
+
+  </target>
+
+  <target name="jar" depends="build" description="creates a Hadoop ready jar will all dependencies">
+
+    <!-- copy Cascading classes and libraries -->
+    <copy todir="${build.classes}/lib" file="${cascading.lib}"/>
+    <copy todir="${build.classes}/lib">
+      <fileset dir="${cascading.libs}" includes="*.jar"/>
+    </copy>
+
+
+    <jar jarfile="${build.dir}/${ant.project.name}-${cascadingsh.release.version}.jar">
+      <fileset dir="${build.classes}"/>
+      <fileset dir="${basedir}" includes="lib/"/>
+      <manifest>
+        <attribute name="Main-Class" value="${ant.project.name}/Main"/>
+      </manifest>
+    </jar>
+
+  </target>
+
+  <target name="dist" depends="jar" description="prepares current project">
+
+    <mkdir dir="${dist}"/>
+
+    <copy todir="${dist}">
+
+      <fileset dir=".">
+        <include name="${lib.dir}/*.jar"/>
+        <include name="README.txt"/>
+        <include name="gpl.txt"/>
+      </fileset>
+
+    </copy>
+
+    <copy todir="${dist}">
+
+      <fileset dir="${src.script}">
+        <include name="setup.groovy"/>
+      </fileset>
+
+    </copy>
+
+    <copy file="${cascading.all.lib}" todir="${dist}/lib"/>
+
+    <copy todir="${dist}/lib">
+
+      <fileset dir="${build.dir}">
+        <include name="*.jar"/>
+      </fileset>
+
+      <fileset dir="${cascading.libs}">
+        <include name="*.jar"/>
+      </fileset>
+
+    </copy>
+
+    <exec command="chmod +x ${dist}/setup.groovy"/>
+
+  </target>
+
+  <target name="tar" depends="dist" description="creates an archive of current project">
+    <tar destfile="${ant.project.name}-${cascadingsh.release.version}.tgz"
+         compression="gzip">
+      <tarfileset dir="dist/" prefix="${ant.project.name}-${cascadingsh.release.version}">
+        <include name="**/**"/>
+      </tarfileset>
+    </tar>
+  </target>
+
+
+</project>
