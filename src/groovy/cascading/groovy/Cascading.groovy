@@ -1,5 +1,3 @@
-#!/usr/bin/env groovy
-
 /*
  * Copyright (c) 2007-2008 Concurrent, Inc. All Rights Reserved.
  *
@@ -21,36 +19,36 @@
  * along with Cascading.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-println("Installing Cascading Groovy Shell Extensions")
+package cascading.groovy
 
-def installRoot = "${System.properties[ "user.home" ]}/.groovy"
+import cascading.groovy.startup.LoadHadoop
+import org.apache.log4j.Level
+import org.apache.log4j.Logger
 
-File groovyHome = new File(installRoot);
-File groovyLib = new File(groovyHome, "lib");
+class Cascading
+{
 
-println "  installing to: ${groovyHome}"
-
-File groovyProfile = new File(groovyHome, 'groovysh.profile')
-
-def ant = new AntBuilder()
-
-groovyLib.mkdirs();
-
-println "  copying files to: ${groovyLib}"
-
-// remove older jars, catch all cascading.jars
-// need to track a manifest instead
-ant.delete()
-  {
-    fileset(dir: groovyLib, includes: "cascading*.jar")
+  static {
+    new LoadHadoop().register()
   }
 
-ant.copy(todir: groovyLib)
+  Cascading()
   {
-    fileset(dir: "./lib")
-      {
-        include(name: "*.jar")
-      }
   }
 
-println "Done"
+  CascadingBuilder builder()
+  {
+    return new CascadingBuilder();
+  }
+
+  void setInfoLoggin()
+  {
+    Logger.getLogger("cascading").setLevel(Level.INFO)
+  }
+
+  void setDebugLogging()
+  {
+    Logger.getLogger("cascading").setLevel(Level.DEBUG)
+  }
+
+}

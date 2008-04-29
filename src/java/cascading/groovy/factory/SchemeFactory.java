@@ -39,11 +39,24 @@ public class SchemeFactory extends BaseFactory
   public Object newInstance( FactoryBuilderSupport builder, Object type, Object value, Map attributes ) throws InstantiationException, IllegalAccessException
     {
     if( type.equals( "text" ) )
-      return new TextLine();
+      return createTextLine( value, attributes );
     else if( type.equals( "sequence" ) )
       return createSequenceFile( value, attributes );
 
     throw new RuntimeException( "unknown scheme type: " + type );
+    }
+
+  protected Scheme createTextLine( Object value, Map attributes )
+    {
+    Fields fields = createFields( (List) value );
+
+    if( fields == null )
+      fields = createFields( (List) findRemove( attributes, "fields" ) );
+
+    if( fields != null )
+      return new TextLine( fields );
+    else
+      return new TextLine();
     }
 
   protected Scheme createSequenceFile( Object value, Map attributes )

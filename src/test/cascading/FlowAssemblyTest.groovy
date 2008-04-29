@@ -165,22 +165,4 @@ class FlowAssemblyTest extends GroovyTestCase
     assertEquals("sinks", 1, flow.sinks.size());
   }
 
-  void testFlowVeryBrief()
-  {
-    def builder = new CascadingBuilder();
-
-    def flow = builder("path")
-      {
-        source(path: "input/path", fields: ["f1"])
-
-        regexParser(args: ["f1"], res: ["f1", "g1"], decl: ["g1"], pattern: /.*/, groups: [0, 1])
-        group(by: ["f1"], sort: ["g1"])
-        sum(args: ["g1"], res: ["f1", "sum"])
-
-        sink(path: "file://output/path", scheme: text())
-      };
-
-    assertEquals("sources", 1, flow.sources.size());
-    assertEquals("sinks", 1, flow.sinks.size());
-  }
 }

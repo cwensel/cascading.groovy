@@ -69,6 +69,25 @@ class FlowTest extends GroovyTestCase
     verifySinks(flow, 10, /^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/)
   }
 
+  void testCutSort()
+  {
+    def builder = new CascadingBuilder();
+
+    Flow flow = builder("cut")
+      {
+        source(inputFileApache)
+
+        cut(/\s+/, results: [1])
+        group([0])
+
+        sink(outputPath + "cut-sort", delete: true)
+      }
+
+    flow.complete()
+
+    verifySinks(flow, 10, /^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/)
+  }
+
   void testFilter()
   {
     def builder = new CascadingBuilder();
@@ -80,6 +99,25 @@ class FlowTest extends GroovyTestCase
         filter(/.*88.*/)
 
         sink(outputPath + "filter", delete: true)
+      }
+
+    flow.complete()
+
+    verifySinks(flow, 1)
+  }
+
+  void testFilterGrouped()
+  {
+    def builder = new CascadingBuilder();
+
+    Flow flow = builder("grep")
+      {
+        source(inputFileApache)
+
+        filter(/.*88.*/)
+        group(["line"])
+
+        sink(outputPath + "filter-grouped", delete: true)
       }
 
     flow.complete()

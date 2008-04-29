@@ -55,7 +55,7 @@
 
   <property name="lib.dir" location="${basedir}/lib"/>
 
-  <property name="javac.debug" value="false"/>
+  <property name="javac.debug" value="true"/>
 
   <property name="build.dir" location="${basedir}/build/"/>
   <property name="build.classes" location="${build.dir}/classes"/>
@@ -128,7 +128,7 @@
     <mkdir dir="${build.test}"/>
     <mkdir dir="${lib.dir}"/>
 
-    <javac srcdir="${src.java}" destdir="${build.classes}" verbose="off">
+    <javac srcdir="${src.java}" destdir="${build.classes}" verbose="off" debug="${javac.debug}">
       <classpath refid="project.class.path"/>
     </javac>
 

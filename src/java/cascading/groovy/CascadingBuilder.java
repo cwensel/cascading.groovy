@@ -23,6 +23,7 @@ package cascading.groovy;
 
 import cascading.groovy.factory.AssemblyFactory;
 import cascading.groovy.factory.BaseHolder;
+import cascading.groovy.factory.CascadeFactory;
 import cascading.groovy.factory.EndPointFactory;
 import cascading.groovy.factory.FlowFactory;
 import cascading.groovy.factory.GroupFactory;
@@ -90,6 +91,8 @@ public class CascadingBuilder extends FactoryBuilderSupport
     {
     if( node instanceof FlowFactory.FlowHolder )
       node = ( (FlowFactory.FlowHolder) node ).connectFlow();
+    else if( node instanceof CascadeFactory.CascadeHolder )
+      node = ( (CascadeFactory.CascadeHolder) node ).connectCascade();
 
     return super.postNodeCompletion( parent, node );
     }
@@ -98,7 +101,8 @@ public class CascadingBuilder extends FactoryBuilderSupport
     {
 
     // Flow
-    registerFactory( "call", new FlowFactory( "default" ) );
+    registerFactory( "call", new CascadeFactory( "default" ) );
+    registerFactory( "cascade", new CascadeFactory() );
     registerFactory( "flow", new FlowFactory() );
 
     // Assembly
