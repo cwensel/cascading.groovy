@@ -40,6 +40,9 @@ public class TapFactory extends BaseFactory
     if( type != null && type.equals( "tap" ) )
       return value;
 
+    if( value != null )
+      value = value.toString();
+
     return new TapHolder( (String) type, (String) value );
     }
 

@@ -44,6 +44,9 @@ public class EndPointFactory extends BaseFactory
         sourceScheme = tapMap.getSource().getScheme();
       }
 
+    if( value != null )
+      value = value.toString();
+
     if( !attributes.containsKey( "path" ) ) // value is path, not name
       return new EndPointHolder( (String) type, null, (String) value, sourceScheme );
     else

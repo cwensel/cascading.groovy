@@ -31,13 +31,27 @@ import cascading.groovy.factory.IdentityFactory;
 import cascading.groovy.factory.OperationFactory;
 import cascading.groovy.factory.OperatorFactory;
 import cascading.groovy.factory.SchemeFactory;
-import cascading.groovy.factory.SumFactory;
 import cascading.groovy.factory.TapFactory;
 import cascading.groovy.factory.TapMapFactory;
+import cascading.groovy.factory.TypeOperationFactory;
+import cascading.groovy.factory.date.DateFormatterFactory;
+import cascading.groovy.factory.date.DateParserFactory;
 import cascading.groovy.factory.regex.RegexFilterFactory;
 import cascading.groovy.factory.regex.RegexParserFactory;
+import cascading.groovy.factory.regex.RegexReplaceFactory;
 import cascading.groovy.factory.regex.RegexSplitGeneratorFactory;
 import cascading.groovy.factory.regex.RegexSplitterFactory;
+import cascading.operation.aggregator.Average;
+import cascading.operation.aggregator.Count;
+import cascading.operation.aggregator.First;
+import cascading.operation.aggregator.Last;
+import cascading.operation.aggregator.Max;
+import cascading.operation.aggregator.Min;
+import cascading.operation.aggregator.Sum;
+import cascading.operation.text.DateFormatter;
+import cascading.operation.text.DateParser;
+import cascading.operation.text.FieldFormatter;
+import cascading.operation.text.FieldJoiner;
 import cascading.tuple.Fields;
 import groovy.lang.Closure;
 import groovy.util.FactoryBuilderSupport;
@@ -119,15 +133,30 @@ public class CascadingBuilder extends FactoryBuilderSupport
     registerFactory( "copy", new IdentityFactory() );
 
     registerFactory( "regexParser", new RegexParserFactory() );
+    registerFactory( "regexReplace", new RegexReplaceFactory() );
     registerFactory( "regexFilter", new RegexFilterFactory() );
     registerFactory( "regexSplitter", new RegexSplitterFactory() );
     registerFactory( "regexSplitGenerator", new RegexSplitGeneratorFactory() );
 
     registerFactory( "filter", new RegexFilterFactory() );
     registerFactory( "cut", new RegexSplitterFactory() );
-    registerFactory( "gen", new RegexSplitGeneratorFactory() );
+    registerFactory( "tokenize", new RegexSplitGeneratorFactory() );
+    registerFactory( "replace", new RegexReplaceFactory() );
+    registerFactory( "replaceFirst", new RegexReplaceFactory( false ) );
+    registerFactory( "replaceAll", new RegexReplaceFactory( true ) );
 
-    registerFactory( "sum", new SumFactory() );
+    registerFactory( "sum", new TypeOperationFactory( Sum.class ) );
+    registerFactory( "count", new TypeOperationFactory( Count.class ) );
+    registerFactory( "first", new TypeOperationFactory( First.class ) );
+    registerFactory( "last", new TypeOperationFactory( Last.class ) );
+    registerFactory( "min", new TypeOperationFactory( Min.class ) );
+    registerFactory( "max", new TypeOperationFactory( Max.class ) );
+    registerFactory( "avg", new TypeOperationFactory( Average.class ) );
+
+    registerFactory( "dateFormatter", new TypeOperationFactory( DateFormatter.class, "format" ) );
+    registerFactory( "dateParser", new TypeOperationFactory( DateParser.class, "format" ) );
+    registerFactory( "fieldFormatter", new TypeOperationFactory( FieldFormatter.class, "format" ) );
+    registerFactory( "fieldJoiner", new TypeOperationFactory( FieldJoiner.class, "delimiter" ) );
 
     // TapMap
     registerFactory( "map", new TapMapFactory() );
