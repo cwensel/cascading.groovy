@@ -150,7 +150,7 @@ class CascadeTest extends GroovyTestCase
     cascade.complete()
 
     // the sink does not share the source scheme, so the offset will show up
-    verifySinks(cascade.getFlows().get(0), 8, /^\d\t\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\t\d$/)
+    verifySinks(cascade.getFlows().get(0), 8, /^\d+\t\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\t\d$/)
   }
 
   void testJoinFull()
