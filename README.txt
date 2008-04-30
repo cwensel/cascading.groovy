@@ -11,10 +11,13 @@ General Information:
 
     >./setup.groovy
 
-  This will copy all libraries to ~/.groovy/lib, and update ~/.groovy/groovysh.profile.
+  This will copy all libraries to ~/.groovy/lib.
 
-  One line is added to the bottom of groovysh.profile that will register all Hadoop libraries
-  with the shell on startup. For this to work, HADOOP_HOME and optionally HADOOP_CONF must be set.
+  During runtime, when instantiating cascading.groovy.Cascading(), Hadoop libraries will be registered
+  with the Groovy Classloader based on your HADOOP_HOME and HADOOP_CONF.
+
+  See the included samples to get started.
+
 
 License:
 
