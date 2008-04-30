@@ -54,6 +54,7 @@
   <property name="conf.dir" location="${hadoop.root}/conf"/>
 
   <property name="lib.dir" location="${basedir}/lib"/>
+  <property name="sample.dir" location="${basedir}/sample"/>
 
   <property name="javac.debug" value="true"/>
 
@@ -215,7 +216,6 @@
     <copy todir="${dist}">
 
       <fileset dir=".">
-        <include name="${lib.dir}/*.jar"/>
         <include name="README.txt"/>
         <include name="gpl.txt"/>
       </fileset>
@@ -228,6 +228,10 @@
         <include name="setup.groovy"/>
       </fileset>
 
+    </copy>
+
+    <copy todir="${dist}/sample">
+      <fileset dir="${sample.dir}"/>
     </copy>
 
     <copy file="${cascading.all.lib}" todir="${dist}/lib"/>
@@ -244,7 +248,10 @@
 
     </copy>
 
-    <exec command="chmod +x ${dist}/setup.groovy"/>
+    <exec executable="chmod">
+      <arg value="+x"/>
+      <arg value="${dist}/setup.groovy"/>
+    </exec>
 
   </target>
 
