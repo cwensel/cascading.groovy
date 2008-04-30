@@ -9,7 +9,7 @@ General Information:
 
   To install, first make sure Groovy is installed, the execute
 
-    >./setup.groovy
+   $ groovy setup.groovy
 
   This will copy all libraries to ~/.groovy/lib.
 
