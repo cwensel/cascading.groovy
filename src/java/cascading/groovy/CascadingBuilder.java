@@ -21,6 +21,8 @@
 
 package cascading.groovy;
 
+import cascading.cascade.Cascade;
+import cascading.flow.Flow;
 import cascading.groovy.factory.AssemblyFactory;
 import cascading.groovy.factory.BaseHolder;
 import cascading.groovy.factory.CascadeFactory;
@@ -34,8 +36,6 @@ import cascading.groovy.factory.SchemeFactory;
 import cascading.groovy.factory.TapFactory;
 import cascading.groovy.factory.TapMapFactory;
 import cascading.groovy.factory.TypeOperationFactory;
-import cascading.groovy.factory.date.DateFormatterFactory;
-import cascading.groovy.factory.date.DateParserFactory;
 import cascading.groovy.factory.regex.RegexFilterFactory;
 import cascading.groovy.factory.regex.RegexParserFactory;
 import cascading.groovy.factory.regex.RegexReplaceFactory;
@@ -52,12 +52,109 @@ import cascading.operation.text.DateFormatter;
 import cascading.operation.text.DateParser;
 import cascading.operation.text.FieldFormatter;
 import cascading.operation.text.FieldJoiner;
+import cascading.pipe.Pipe;
+import cascading.tap.Tap;
 import cascading.tuple.Fields;
 import groovy.lang.Closure;
 import groovy.util.FactoryBuilderSupport;
 
 /**
- *
+ * CascadingBuilder is a Groovy <a href="http://groovy.codehaus.org/Builders">'builder'</a> extension.
+ * <p/>
+ * It supports the nested assembly of '{@link Tap} maps', {@link Pipe} assemblies, {@link Flow}s, and {@link Cascade}s.
+ * Here is an example using the condensed format:
+ * <pre>
+ * def cascading = new Cascading()
+ * def builder = cascading.builder();
+ * <p/>
+ * Cascade cascade = builder("cut cascade")
+ *   {
+ *     flow("cut")
+ *       {
+ *         source(inputFileApache)
+ * <p/>
+ *         cut(/\s+/, results: [1])
+ *         group([0])
+ * <p/>
+ *         sink(outputPath + "cut-sort", delete: true)
+ *       }
+ *   }
+ * <p/>
+ * cascade.complete()
+ * </pre>
+ * Here is the same function in its full form:
+ * <pre>
+ *  def builder = new CascadingBuilder();
+ * <p/>
+ *  Cascade cascade = builder("cut cascade")
+ *    {
+ *      flow("cut flow")
+ *        {
+ *          map
+ *          {
+ *            source("cut")
+ *              {
+ *                lfs(inputFileApache)
+ *                  {
+ *                    text(["line"])
+ *                  }
+ *              }
+ * <p/>
+ *            sink("cut")
+ *              {
+ *                hfs(outputPath + "cut-sort-full", delete: true)
+ *                  {
+ *                    text()
+ *                  }
+ *              }
+ *          }
+ * <p/>
+ *          assembly(name: "cut")
+ *            {
+ *              eachTuple(args: ["line"], results: [1])
+ *                {
+ *                  regexSplitter(/\s+/)
+ *                }
+ * <p/>
+ *              group([0])
+ * <p/>
+ *              everyGroup(args: [0], results: ALL)
+ *                {
+ *                  count()
+ *                }
+ *            }
+ *        }
+ *    }
+ * <p/>
+ *  cascade.complete()
+ * </pre>
+ * This last form is necessary in order to support complex paths within and between flows.
+ * <p/>
+ * Additionally, within the eachTuple and everyGroup closure, user custom classes can be specified.
+ * <pre>
+ *  eachTuple(args: ["f1"], results: ["f1", "g1"])
+ *    {
+ *      operation(new RegexParser(new Fields("g1"), ".*", [0, 1] as Integer[]));
+ *    }
+ * </pre>
+ * <p/>
+ * <p/>
+ * List of builder widgets:
+ * <p/>
+ * <ul>
+ * <li>cascade - Create a new Cascade. Expects 'name'.</li>
+ * <li>flow - Create a new Flow. Expects 'name'.</li>
+ * <li>assembly - Create a pipe assembly for inclusion in a Flow. Expects 'name'.</li>
+ * <li>branch - Create a new join or split path in an assembly. Expects 'name'.</li>
+ * <li>eachTuple - Create a new Each Operator. Accepts nested Function or Filter Operations.</li>
+ * <li>everyGroup - Create a new Every Operator. Accepts nested Aggregator Operations.</li>
+ * <li>group - Create a new GroupBy. Accepts 'groupBy' and 'sortBy' fields.</li>
+ * <li>join - Create a new CoGroup. Accpets 'groupBy'</li>
+ * <li>operation</li>
+ * </ul>
+ * <p/>
+ * <p/>
+ * Extending Cascadingbuilder.
  */
 public class CascadingBuilder extends FactoryBuilderSupport
   {

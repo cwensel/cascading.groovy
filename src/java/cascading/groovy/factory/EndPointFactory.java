@@ -48,13 +48,14 @@ public class EndPointFactory extends BaseFactory
       value = value.toString();
 
     if( !attributes.containsKey( "path" ) ) // value is path, not name
-      return new EndPointHolder( (String) type, null, (String) value, sourceScheme );
+      return new EndPointHolder( (String) type, (String) value, sourceScheme );
     else
-      return new EndPointHolder( (String) type, (String) value, null, sourceScheme );
+      return new EndPointHolder( (String) type, (String) value, sourceScheme );
     }
 
   public class EndPointHolder extends BaseHolder
     {
+    String argValue;
     String name = TapMap.DEFAULT_NAME;
     String path;
     Comparable[] fields;
@@ -63,16 +64,11 @@ public class EndPointFactory extends BaseFactory
     boolean delete = false;
     Tap tap;
 
-    public EndPointHolder( String type, String name, String path, Scheme sourceScheme )
+    public EndPointHolder( String type, String argValue, Scheme sourceScheme )
       {
       super( type );
+      this.argValue = argValue;
       this.sourceScheme = sourceScheme;
-
-      if( name != null )
-        this.name = name;
-
-      if( path != null )
-        this.path = path;
       }
 
     public void setTap( Tap tap )
@@ -96,7 +92,18 @@ public class EndPointFactory extends BaseFactory
         scheme = sourceScheme;
 
       if( tap == null )
+        {
+        if( path == null )
+          {
+          path = argValue;
+          argValue = null;
+          }
+
         new TapFactory.TapHolder( "hfs", path, scheme, fields, delete ).handleParent( this );
+        }
+
+      if( argValue != null )
+        name = argValue;
 
       if( tap == null )
         throw new RuntimeException( "no tap specified in " + getType() + "endpoint named " + name );

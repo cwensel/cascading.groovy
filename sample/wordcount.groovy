@@ -31,4 +31,4 @@ Flow flow = builder.flow("wordcount")
     sink('output/counted', delete: true)
   }
 
-flow.complete();
+flow.complete(); // execute the flow

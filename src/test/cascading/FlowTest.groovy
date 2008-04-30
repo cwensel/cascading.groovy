@@ -25,7 +25,9 @@ import cascading.flow.Flow
 import cascading.groovy.CascadingBuilder
 
 class FlowTest extends GroovyTestCase
-{String inputFileApache = "build/test/data/apache.10.txt";
+{
+
+  String inputFileApache = "build/test/data/apache.10.txt";
   String outputPath = "build/test/output/flow/";
 
   public FlowTest()
@@ -37,7 +39,7 @@ class FlowTest extends GroovyTestCase
   {
     def builder = new CascadingBuilder();
 
-    Flow flow = builder("copy")
+    Flow flow = builder.flow("copy")
       {
         source(inputFileApache)
 
@@ -55,7 +57,7 @@ class FlowTest extends GroovyTestCase
   {
     def builder = new CascadingBuilder();
 
-    Flow flow = builder("cut")
+    Flow flow = builder.flow("cut")
       {
         source(inputFileApache)
 
@@ -73,7 +75,7 @@ class FlowTest extends GroovyTestCase
   {
     def builder = new CascadingBuilder();
 
-    Flow flow = builder("cut")
+    Flow flow = builder.flow("cut")
       {
         source(inputFileApache)
 
@@ -92,7 +94,7 @@ class FlowTest extends GroovyTestCase
   {
     def builder = new CascadingBuilder();
 
-    Flow flow = builder("grep")
+    Flow flow = builder.flow("grep")
       {
         source(inputFileApache)
 
@@ -110,7 +112,7 @@ class FlowTest extends GroovyTestCase
   {
     def builder = new CascadingBuilder();
 
-    Flow flow = builder("grep")
+    Flow flow = builder.flow("grep")
       {
         source(inputFileApache)
 

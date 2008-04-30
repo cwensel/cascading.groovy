@@ -2,7 +2,6 @@ import cascading.cascade.Cascade
 import cascading.groovy.Cascading
 
 def cascading = new Cascading()
-
 def builder = cascading.builder();
 
 Cascade fetchSort = builder.cascade("fetchSort")

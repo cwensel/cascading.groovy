@@ -32,22 +32,12 @@ import groovy.util.FactoryBuilderSupport;
  */
 public class FlowFactory extends BaseFactory
   {
-  String name;
-
   public FlowFactory()
     {
     }
 
-  public FlowFactory( String name )
-    {
-    this.name = name;
-    }
-
   public Object newInstance( FactoryBuilderSupport builder, Object type, Object value, Map attributes ) throws InstantiationException, IllegalAccessException
     {
-    if( value == null )
-      value = name;
-
     return new FlowHolder( (String) type, (String) value );
     }
 
@@ -56,6 +46,8 @@ public class FlowFactory extends BaseFactory
     String name;
     AssemblyFactory.Assembly assembly = new AssemblyFactory.Assembly();
     TapMap map = new TapMap();
+
+    Flow flow;
 
     public FlowHolder( String type, String name )
       {
@@ -100,16 +92,21 @@ public class FlowFactory extends BaseFactory
 
     public Flow connectFlow()
       {
+      if( flow != null )
+        return flow;
+
       FlowConnector flowConnector = new FlowConnector();
 
       if( map.getSources().size() == 1 && map.getSinks().size() == 1 && assembly.getTails().size() == 1 )
-        return flowConnector.connect( map.getSource(), map.getSink(), assembly.getTail() );
+        flow = flowConnector.connect( name, map.getSource(), map.getSink(), assembly.getTail() );
       else if( map.getSources().size() == 1 )
-        return flowConnector.connect( map.getSource(), map.getSinks(), assembly.getTailsArray() );
+        flow = flowConnector.connect( name, map.getSource(), map.getSinks(), assembly.getTailsArray() );
       else if( map.getSinks().size() == 1 )
-        return flowConnector.connect( map.getSources(), map.getSink(), assembly.getTail() );
+        flow = flowConnector.connect( name, map.getSources(), map.getSink(), assembly.getTail() );
       else
-        return flowConnector.connect( map.getSources(), map.getSinks(), assembly.getTailsArray() );
+        flow = flowConnector.connect( name, map.getSources(), map.getSinks(), assembly.getTailsArray() );
+
+      return flow;
       }
     }
 
