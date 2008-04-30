@@ -21,6 +21,7 @@
 
 package cascading.groovy.factory;
 
+import java.util.ArrayList;
 import java.util.Map;
 
 import cascading.operation.Identity;
@@ -35,6 +36,23 @@ public class IdentityFactory extends OperationFactory
   @Override
   protected Operation makeOperation( Object value, Map attributes, Fields declaredFields )
     {
-    return (Operation) makeInstance( Identity.class, declaredFields );
+    ArrayList typesList = (ArrayList) attributes.remove( "types" );
+
+    return (Operation) makeInstance( Identity.class, declaredFields, createClassArray( typesList ) );
     }
+
+  protected Class[] createClassArray( ArrayList groupList )
+    {
+    if( groupList == null )
+      return null;
+
+    Class[] results = new Class[groupList.size()];
+
+    for( int i = 0; i < groupList.size(); i++ )
+      results[ i ] = (Class) groupList.get( i );
+
+    return results;
+    }
+
+
   }

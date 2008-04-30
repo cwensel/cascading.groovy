@@ -21,6 +21,9 @@
 
 package cascading.groovy;
 
+import java.text.SimpleDateFormat;
+import java.util.Formatter;
+
 import cascading.cascade.Cascade;
 import cascading.flow.Flow;
 import cascading.groovy.factory.AssemblyFactory;
@@ -41,6 +44,7 @@ import cascading.groovy.factory.regex.RegexParserFactory;
 import cascading.groovy.factory.regex.RegexReplaceFactory;
 import cascading.groovy.factory.regex.RegexSplitGeneratorFactory;
 import cascading.groovy.factory.regex.RegexSplitterFactory;
+import cascading.operation.Identity;
 import cascading.operation.aggregator.Average;
 import cascading.operation.aggregator.Count;
 import cascading.operation.aggregator.First;
@@ -48,6 +52,11 @@ import cascading.operation.aggregator.Last;
 import cascading.operation.aggregator.Max;
 import cascading.operation.aggregator.Min;
 import cascading.operation.aggregator.Sum;
+import cascading.operation.regex.RegexFilter;
+import cascading.operation.regex.RegexParser;
+import cascading.operation.regex.RegexReplace;
+import cascading.operation.regex.RegexSplitGenerator;
+import cascading.operation.regex.RegexSplitter;
 import cascading.operation.text.DateFormatter;
 import cascading.operation.text.DateParser;
 import cascading.operation.text.FieldFormatter;
@@ -141,20 +150,62 @@ import groovy.util.FactoryBuilderSupport;
  * <p/>
  * List of builder widgets:
  * <p/>
+ * Core components:
  * <ul>
  * <li>cascade - Create a new Cascade. Expects 'name'.</li>
  * <li>flow - Create a new Flow. Expects 'name'.</li>
+ * </ul>
+ * Pipe assembly support:
+ * <ul>
  * <li>assembly - Create a pipe assembly for inclusion in a Flow. Expects 'name'.</li>
  * <li>branch - Create a new join or split path in an assembly. Expects 'name'.</li>
- * <li>eachTuple - Create a new Each Operator. Accepts nested Function or Filter Operations.</li>
- * <li>everyGroup - Create a new Every Operator. Accepts nested Aggregator Operations.</li>
+ * <li>eachTuple - Create a new Each Operator. Accepts nested Function or Filter Operations. Expects 'arguments' ('args') and 'results' ('res'),
+ * where the values are arrays. Optionally 'argumentFields' and 'resultFields' may be given, which are expected to be {@link Fields} instances.</li>
+ * <li>everyGroup - Create a new Every Operator. Accepts nested Aggregator Operations. Expects same arguments as eachTuple.</li>
+ * <li>operation - A child to eachTuple or everyGroup allowing for user Operation classes to be included in the assembly.</li>
+ * </ul>
+ * Tap and Scheme support:
+ * <ul>
+ * <li>map - Optional parent for source and sink.</li>
+ * <li>source and sink - Create a new source Tap. Expects 'name' and optionally child arguments.</li>
+ * <li>hfs and lfs - Creates an Hfs/Lfs Tap. Expects 'path' and optionaly 'delete' if resource should be deleted on exec.</li>
+ * <li>text - Create a TextLine scheme, with default source field 'line'. Optionally accepts 'fields'.</li>
+ * <li>sequence - Create a SequenceFile scheme. Expects 'fields'.</li>
+ * <li>tap - Optional child to sink or source that allows for user Tap classes. Expects 'name'.</li>
+ * </ul>
+ * Group and Join support:
+ * <ul>
  * <li>group - Create a new GroupBy. Accepts 'groupBy' and 'sortBy' fields.</li>
- * <li>join - Create a new CoGroup. Accpets 'groupBy'</li>
- * <li>operation</li>
+ * <li>join - Create a new CoGroup. Accepts 'groupBy' and 'declared' fields.</li>
+ * </ul>
+ * Functions and Filters (formal/alias). All Functions may take the argument 'declared' to override their default
+ * declaredFields value:
+ * <ul>
+ * <li>copy - Creates a {@link Identity}. Passes incoming arguments as results.</li>
+ * <li>coerce - Creates a {@link Identity}. Coerces incoming arguments to the given types in the 'types' argument.</li>
+ * <li>regexParser - Creates a {@link RegexParser}. Expects regex 'pattern' and an int array of regex 'groups'</li>
+ * <li>regexReplace/replace/replaceAll/replaceFirst - Creates a {@link RegexReplace}. Expects a regex 'pattern',
+ * 'replacement' and optionally a boolean 'replaceAll'.</li>
+ * <li>regexFilter/filter - Creates a {@link RegexFilter}. Expects regex 'pattern'.</li>
+ * <li>regexSplitter/cut - Creates a {@link RegexSplitter}. Expects regex 'pattern'</li>
+ * <li>regexSplitGenerator/tokenize - Creates a {@link RegexSplitGenerator}. Expects regex 'pattern'</li>
+ * <li>dateFormatter - Creates a {@link DateFormatter}. Expects a {@link SimpleDateFormat} 'format'.</li>
+ * <li>dateParser - Creates a {@link DateParser}. Expects a {@link SimpleDateFormat} 'format'.</li>
+ * <li>fieldFormatter - Creates a {@link FieldFormatter}. Expects a {@link Formatter} 'format'.</li>
+ * <li>fieldJointer - Creates a {@link FieldJoiner}. Expects a value 'delimiter' string.</li>
+ * </ul>
+ * Aggregators:
+ * <ul>
+ * <li>sum - </li>
+ * <li>count - </li>
+ * <li>first - </li>
+ * <li>last - </li>
+ * <li>min - </li>
+ * <li>max - </li>
+ * <li>avg - </li>
  * </ul>
  * <p/>
  * <p/>
- * Extending Cascadingbuilder.
  */
 public class CascadingBuilder extends FactoryBuilderSupport
   {
@@ -221,13 +272,14 @@ public class CascadingBuilder extends FactoryBuilderSupport
     registerFactory( "branch", new AssemblyFactory() );
     registerFactory( "eachTuple", new OperatorFactory() );
     registerFactory( "everyGroup", new OperatorFactory() );
+    registerFactory( "operation", new OperationFactory() );
+
     registerFactory( "group", new GroupFactory() );
     registerFactory( "join", new GroupFactory() );
 
-    registerFactory( "operation", new OperationFactory() );
-
     //   operations
     registerFactory( "copy", new IdentityFactory() );
+    registerFactory( "coerce", new IdentityFactory() );
 
     registerFactory( "regexParser", new RegexParserFactory() );
     registerFactory( "regexReplace", new RegexReplaceFactory() );

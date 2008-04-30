@@ -56,7 +56,12 @@ public class SchemeFactory extends BaseFactory
     if( fields != null )
       return new TextLine( fields );
     else
-      return new TextLine();
+      return createDefaultTextLine();
+    }
+
+  static TextLine createDefaultTextLine()
+    {
+    return new TextLine( new Fields( "line" ) );
     }
 
   protected Scheme createSequenceFile( Object value, Map attributes )

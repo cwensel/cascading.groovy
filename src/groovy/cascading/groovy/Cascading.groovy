@@ -22,8 +22,6 @@
 package cascading.groovy
 
 import cascading.groovy.startup.LoadHadoop
-import org.apache.log4j.Level
-import org.apache.log4j.Logger
 
 class Cascading
 {
@@ -43,12 +41,14 @@ class Cascading
 
   void setInfoLoggin()
   {
-    Logger.getLogger("cascading").setLevel(Level.INFO)
+    // must not import package, fails on startup
+    org.apache.log4j.Logger.getLogger("cascading").setLevel(org.apache.log4j.Level.INFO)
   }
 
   void setDebugLogging()
   {
-    Logger.getLogger("cascading").setLevel(Level.DEBUG)
+    // must not import package, fails on startup
+    org.apache.log4j.Logger.getLogger("cascading").setLevel(org.apache.log4j.Level.DEBUG)
   }
 
 }

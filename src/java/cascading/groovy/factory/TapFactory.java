@@ -106,7 +106,7 @@ public class TapFactory extends BaseFactory
     private Hfs createHfs()
       {
       if( scheme == null && path.matches( ".*[.](txt|gz)[^/]?$" ) )
-        scheme = new TextLine( new Fields( "line" ) );
+        scheme = SchemeFactory.createDefaultTextLine();
 
       if( scheme == null && fields == null )
         throw new RuntimeException( "must provide scheme or fields in tap with path: " + path );
