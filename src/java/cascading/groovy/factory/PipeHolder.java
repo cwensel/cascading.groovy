@@ -116,6 +116,8 @@ public abstract class PipeHolder extends BaseHolder
         types[ i ] = Filter.class;
       else if( Aggregator.class.isAssignableFrom( types[ i ] ) )
         types[ i ] = Aggregator.class;
+      else if( Boolean.class.isAssignableFrom( types[ i ] ) )
+        types[ i ] = Boolean.TYPE;
       }
 
     try

@@ -46,9 +46,10 @@ public class GroupFactory extends BaseFactory
     rename( attributes, "groupBy", "by" );
     rename( attributes, "sortBy", "sort" );
     rename( attributes, "declared", "decl" );
+    rename( attributes, "reverse", "rev" );
 
     Set names = new HashSet();
-    Collections.addAll( names, "groupBy", "sortBy", "declared" );
+    Collections.addAll( names, "groupBy", "sortBy", "declared", "reverse" );
 
     Map joinFields = new HashMap( attributes );
 
@@ -72,6 +73,7 @@ public class GroupFactory extends BaseFactory
     Comparable[] groupBy;
     Comparable[] sortBy;
     Comparable[] declared;
+    Boolean reverse = false;
     Map joinFields;
 
     public GroupHolder( String type, Map joinFields )
@@ -143,12 +145,18 @@ public class GroupFactory extends BaseFactory
       if( sortBy != null )
         sortFields = new Fields( sortBy );
 
-      return makePipe( GroupBy.class, name, pipe, groupFields, sortFields );
+      if( reverse != null && !reverse ) // set null, so we don't send it to the ctor
+        reverse = null;
+
+      if( sortFields == null && reverse != null ) // if not null, then is true
+        sortFields = groupFields;
+
+      return makePipe( GroupBy.class, name, pipe, groupFields, sortFields, reverse );
       }
 
     public String toString()
       {
-      return "GroupHolder{" + "groupBy=" + ( groupBy == null ? null : Arrays.asList( groupBy ) ) + ", sortBy=" + ( sortBy == null ? null : Arrays.asList( sortBy ) ) + '}';
+      return "GroupHolder{" + "groupBy=" + ( groupBy == null ? null : Arrays.asList( groupBy ) ) + ", sortBy=" + ( sortBy == null ? null : Arrays.asList( sortBy ) ) + ", reverse=" + reverse + '}';
       }
     }
   }

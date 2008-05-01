@@ -23,18 +23,18 @@ import cascading.groovy.Cascading
 */
 
 // This is a query and the 'content-length' is not returned, so it must be prefetched.
-File dir = new File('output/fetched')
-File data = new File(dir, "fetch.txt")
+File input = new File('output/fetched', "fetch.txt")
+String output = 'output/counted'
 
-if( !data.exists() )
+if( !input.exists() ) // only fetch once
 {
-  dir.mkdirs()
+  input.getParentFile().mkdirs();
 
   URL url = new URL('http://www.i-r-genius.com/cgi-bin/lipsum.cgi?qty=400&unit=k&pl=r&ps=6&pp=n&pt=1&format=t&li=1')
 
   url.openStream().readLines().each() {line ->
-    data.append line
-    data.append '\n'
+    input.append line
+    input.append '\n'
   }
 }
 
@@ -43,14 +43,14 @@ def builder = cascading.builder();
 
 Flow flow = builder.flow("wordcount")
   {
-    source(data, scheme: text())
+    source(input, scheme: text())
 
     tokenize(/[.,]*\s+/) // output new tuple for each split
     group() // group on first field, by default
     count() // creates 'count' field, by default
-    group(["count"])
+    group(["count"], reverse: true) // group/sort on 'count', reverse the sort order
 
-    sink('output/counted', delete: true)
+    sink(output, delete: true)
   }
 
 //cascading.setDebugLogging()
