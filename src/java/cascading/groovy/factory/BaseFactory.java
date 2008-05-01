@@ -64,6 +64,9 @@ public abstract class BaseFactory extends AbstractFactory
 
   protected Object makeInstance( Class type, Fields declaredFields, Object... arguments )
     {
+    if( arguments == null )
+      arguments = new Object[0];
+
     ArrayList list = new ArrayList();
 
     list.add( declaredFields );

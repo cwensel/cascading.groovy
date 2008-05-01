@@ -41,15 +41,15 @@ public class IdentityFactory extends OperationFactory
     return (Operation) makeInstance( Identity.class, declaredFields, createClassArray( typesList ) );
     }
 
-  protected Class[] createClassArray( ArrayList groupList )
+  protected Class[] createClassArray( ArrayList typesList )
     {
-    if( groupList == null )
+    if( typesList == null )
       return null;
 
-    Class[] results = new Class[groupList.size()];
+    Class[] results = new Class[typesList.size()];
 
-    for( int i = 0; i < groupList.size(); i++ )
-      results[ i ] = (Class) groupList.get( i );
+    for( int i = 0; i < typesList.size(); i++ )
+      results[ i ] = (Class) typesList.get( i );
 
     return results;
     }

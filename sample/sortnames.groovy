@@ -17,7 +17,7 @@ Cascade fetchSort = builder.cascade("fetchSort")
 
     flow("filter")
       {
-        source('output/imported', scheme: text(["lines"]))
+        source('output/imported', scheme: text())
 
         cut(/\s+/, results: [1])
         group()
@@ -26,4 +26,13 @@ Cascade fetchSort = builder.cascade("fetchSort")
       }
   }
 
-fetchSort.complete();
+//cascading.setDebugLogging()
+
+try
+{
+  fetchSort.complete()
+}
+catch (Exception exception)
+{
+  exception.printStackTrace()
+}
