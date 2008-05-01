@@ -1,7 +1,7 @@
 import cascading.flow.Flow
 import cascading.groovy.Cascading
 
-// Since this is a query, the 'content-length' is not returned, so it must be prefetched.
+// This is a query and the 'content-length' is not returned, so it must be prefetched.
 File dir = new File('output/fetched')
 File data = new File(dir, "fetch.txt")
 
