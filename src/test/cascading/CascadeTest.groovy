@@ -150,7 +150,7 @@ class CascadeTest extends GroovyTestCase
     cascade.complete()
 
     // the sink does not share the source scheme, so the offset will show up
-    verifySinks(cascade.getFlows().get(0), 8, /^\d+\t\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\t\d$/)
+    verifySinks(cascade.getFlows().get(0), 8, /^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\t\d$/)
   }
 
   void testJoinFull()
@@ -217,7 +217,7 @@ class CascadeTest extends GroovyTestCase
     cascade.complete()
 
     // the sink does not share the source scheme, so the offset will show up
-    verifySinks(cascade.getFlows().get(0), 14, /^\d+\t\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\t\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/)
+    verifySinks(cascade.getFlows().get(0), 14, /^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\t\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/)
   }
 
   void testFilter()
@@ -269,15 +269,15 @@ class CascadeTest extends GroovyTestCase
 
       println tap
 
-      assertTrue(flow.tapPathExists(tap))
+      assertTrue("does not exist", flow.tapPathExists(tap))
 
       def count = 0
       flow.openTapForRead(tap).each {tuple ->
-        assertTrue(tuple.toString().matches(match));
+        assertTrue("does not match", tuple.toString().matches(match));
         count++;
       }
 
-      assertEquals(size, count)
+      assertEquals("wrong size", size, count)
     }
   }
 

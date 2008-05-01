@@ -21,6 +21,8 @@
 
 package cascading.groovy.factory;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import cascading.scheme.Scheme;
@@ -44,29 +46,43 @@ public class EndPointFactory extends BaseFactory
         sourceScheme = tapMap.getSource().getScheme();
       }
 
-    if( value != null )
-      value = value.toString();
-
-    return new EndPointHolder( (String) type, (String) value, sourceScheme );
+    return new EndPointHolder( (String) type, value, sourceScheme );
     }
 
   public class EndPointHolder extends BaseHolder
     {
-    String argValue;
+    Object argValue;
     String name = TapMap.DEFAULT_NAME;
-    String path;
+    List<String> paths = new ArrayList<String>();
     Comparable[] fields;
     Scheme sourceScheme;
     Scheme scheme;
     boolean delete = false;
     Tap tap;
 
-    public EndPointHolder( String type, String argValue, Scheme sourceScheme )
+    public EndPointHolder( String type, Object argValue, Scheme sourceScheme )
       {
       super( type );
       this.argValue = argValue;
       this.sourceScheme = sourceScheme;
       }
+
+    public void setPath( Object path )
+      {
+      if( path == null )
+        return;
+
+      if( path instanceof List )
+        {
+        List values = (List) path;
+
+        for( Object value : values )
+          paths.add( value.toString() );
+        }
+      else
+        paths.add( path.toString() );
+      }
+
 
     public void setTap( Tap tap )
       {
@@ -90,17 +106,17 @@ public class EndPointFactory extends BaseFactory
 
       if( tap == null )
         {
-        if( path == null )
+        if( paths.size() == 0 )
           {
-          path = argValue;
+          setPath( argValue );
           argValue = null;
           }
 
-        new TapFactory.TapHolder( "hfs", path, scheme, fields, delete ).handleParent( this );
+        new TapFactory.TapHolder( "hfs", paths, scheme, fields, delete ).handleParent( this );
         }
 
       if( argValue != null )
-        name = argValue;
+        name = (String) argValue;
 
       if( tap == null )
         throw new RuntimeException( "no tap specified in " + getType() + "endpoint named " + name );

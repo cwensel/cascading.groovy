@@ -21,12 +21,16 @@
 
 package cascading.groovy.factory;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import cascading.scheme.Scheme;
 import cascading.scheme.TextLine;
 import cascading.tap.Hfs;
 import cascading.tap.Lfs;
+import cascading.tap.MultiTap;
+import cascading.tap.Tap;
 import cascading.tuple.Fields;
 import groovy.util.FactoryBuilderSupport;
 
@@ -40,15 +44,12 @@ public class TapFactory extends BaseFactory
     if( type != null && type.equals( "tap" ) )
       return value;
 
-    if( value != null )
-      value = value.toString();
-
-    return new TapHolder( (String) type, (String) value );
+    return new TapHolder( (String) type, value );
     }
 
   public static class TapHolder extends BaseHolder
     {
-    String path;
+    List<String> paths = new ArrayList<String>();
     Scheme scheme;
     Comparable[] fields;
     boolean delete = false;
@@ -58,19 +59,36 @@ public class TapFactory extends BaseFactory
       super( type );
       }
 
-    public TapHolder( String type, String path )
+    public TapHolder( String type, Object path )
       {
       super( type );
-      this.path = path;
+      setPath( path );
       }
 
-    public TapHolder( String type, String path, Scheme scheme, Comparable[] fields, boolean delete )
+    public TapHolder( String type, Object path, Scheme scheme, Comparable[] fields, boolean delete )
       {
       super( type );
-      this.path = path;
+      setPath( path );
       this.scheme = scheme;
       this.fields = fields;
       this.delete = delete;
+      }
+
+    public void setPath( Object path )
+      {
+      if( path == null )
+        return;
+
+      if( path instanceof List )
+        {
+        List values = (List) path;
+
+        for( Object value : values )
+          paths.add( value.toString() );
+
+        }
+      else
+        paths.add( path.toString() );
       }
 
     public void setScheme( Scheme scheme )
@@ -85,17 +103,33 @@ public class TapFactory extends BaseFactory
 
     public void handleParent( Object parent )
       {
-      EndPointFactory.EndPointHolder endPoint = (EndPointFactory.EndPointHolder) parent;
+      ( (EndPointFactory.EndPointHolder) parent ).setTap( createTap() );
+      }
 
+    private Tap createTap()
+      {
+      Tap[] taps = new Tap[paths.size()];
+
+      for( int i = 0; i < paths.size(); i++ )
+        taps[ i ] = createTap( paths.get( i ) );
+
+      if( taps.length == 1 )
+        return taps[ 0 ];
+
+      return new MultiTap( taps );
+      }
+
+    private Tap createTap( String path )
+      {
       if( type.equalsIgnoreCase( "hfs" ) )
-        endPoint.setTap( createHfs() );
+        return createHfs( path );
       else if( type.equals( "lfs" ) )
-        endPoint.setTap( createLfs() );
+        return createLfs( path );
       else
         throw new RuntimeException( "unkown tap type: " + type );
       }
 
-    private Lfs createLfs()
+    private Lfs createLfs( String path )
       {
       if( scheme == null )
         return new Lfs( new TextLine(), path, delete );
@@ -103,7 +137,7 @@ public class TapFactory extends BaseFactory
         return new Lfs( scheme, path, delete );
       }
 
-    private Hfs createHfs()
+    private Hfs createHfs( String path )
       {
       if( scheme == null && path.matches( ".*[.](txt|gz)[^/]?$" ) )
         scheme = SchemeFactory.createDefaultTextLine();

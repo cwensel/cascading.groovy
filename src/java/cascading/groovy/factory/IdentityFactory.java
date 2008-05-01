@@ -38,7 +38,7 @@ public class IdentityFactory extends OperationFactory
     {
     ArrayList typesList = (ArrayList) attributes.remove( "types" );
 
-    return (Operation) makeInstance( Identity.class, declaredFields, createClassArray( typesList ) );
+    return (Operation) makeInstance( Identity.class, declaredFields, (Object) createClassArray( typesList ) );
     }
 
   protected Class[] createClassArray( ArrayList typesList )
