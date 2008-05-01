@@ -47,10 +47,7 @@ public class EndPointFactory extends BaseFactory
     if( value != null )
       value = value.toString();
 
-    if( !attributes.containsKey( "path" ) ) // value is path, not name
-      return new EndPointHolder( (String) type, (String) value, sourceScheme );
-    else
-      return new EndPointHolder( (String) type, (String) value, sourceScheme );
+    return new EndPointHolder( (String) type, (String) value, sourceScheme );
     }
 
   public class EndPointHolder extends BaseHolder
