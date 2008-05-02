@@ -44,6 +44,7 @@ public class FlowFactory extends BaseFactory
   public static class FlowHolder extends BaseHolder
     {
     String name;
+    boolean skipIfSinkExists = false;
     AssemblyFactory.Assembly assembly = new AssemblyFactory.Assembly();
     TapMap map = new TapMap();
 
@@ -105,6 +106,8 @@ public class FlowFactory extends BaseFactory
         flow = flowConnector.connect( name, map.getSources(), map.getSink(), assembly.getTail() );
       else
         flow = flowConnector.connect( name, map.getSources(), map.getSinks(), assembly.getTailsArray() );
+
+      flow.setSkipIfSinkExists( skipIfSinkExists );
 
       return flow;
       }

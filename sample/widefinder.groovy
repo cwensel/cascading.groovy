@@ -1,4 +1,4 @@
-import cascading.flow.Flow
+import cascading.cascade.Cascade
 import cascading.groovy.Cascading
 
 /*
@@ -24,13 +24,8 @@ import cascading.groovy.Cascading
 
 def dataUrl = 'http://files.cascading.org/apache.200.txt.gz'
 
-File input = new File('output/logs/apache.txt.gz')
+String logs = 'output/logs/'
 String output = 'output/results'
-
-if( !input.exists() ) // only fetch once
-  "curl --create-dirs -o ${input} ${dataUrl}".execute().waitFor()
-
-assert input.exists()
 
 def APACHE_COMMON_REGEX = /^([^ ]*) +[^ ]* +[^ ]* +\[([^]]*)\] +\"([^ ]*) ([^ ]*) [^ ]*\" ([^ ]*) ([^ ]*).*$/
 def APACHE_COMMON_GROUPS = [1, 2, 3, 4, 5, 6]
@@ -42,35 +37,46 @@ def URL_PATTERN = /^\/archives\/.*$/
 def cascading = new Cascading()
 def builder = cascading.builder();
 
-Flow flow = builder.flow("widefinder")
+Cascade cascade = builder("widefinder")
   {
-    source(input, scheme: text())
 
-    // parse apache log, given regex groups are matched with respective field names
-    regexParser(pattern: APACHE_COMMON_REGEX, groups: APACHE_COMMON_GROUPS, declared: APACHE_COMMON_FIELDS)
+    flow("fetcher", skipIfSinkExists: true)
+      {
+        source(dataUrl) // gz is assumed text scheme
+        copy()
+        sink(logs) // inherits scheme from source
+      }
 
-    // throw away tuples that don't match
-    filter(arguments: ["url"], pattern: URL_PATTERN)
+    flow("counter")
+      {
+        source(logs, scheme: text())
 
-    // throw away unused fields
-    project(arguments: ["url"])
+        // parse apache log, given regex groups are matched with respective field names
+        regexParser(pattern: APACHE_COMMON_REGEX, groups: APACHE_COMMON_GROUPS, declared: APACHE_COMMON_FIELDS)
 
-    group(groupBy: ["url"])
+        // throw away tuples that don't match
+        filter(arguments: ["url"], pattern: URL_PATTERN)
 
-    // creates 'count' field, by default
-    count()
+        // throw away unused fields
+        project(arguments: ["url"])
 
-    // group/sort on 'count', reverse the sort order
-    group(["count"], reverse: true)
+        group(groupBy: ["url"])
 
-    sink(output, delete: true)
+        // creates 'count' field, by default
+        count()
+
+        // group/sort on 'count', reverse the sort order
+        group(["count"], reverse: true)
+
+        sink(output, delete: true)
+      }
   }
 
 //cascading.setDebugLogging()
 
 try
 {
-  flow.complete() // execute the flow
+  cascade.complete() // execute the flow
 }
 catch (Exception exception)
 {
