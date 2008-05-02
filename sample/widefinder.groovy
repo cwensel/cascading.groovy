@@ -40,7 +40,7 @@ def builder = cascading.builder();
 Cascade cascade = builder("widefinder")
   {
 
-    flow("fetcher", skipIfSinkExists: true)
+    flow("fetcher", skipIfSinkExists: true) // no unnecessary polling
       {
         source(dataUrl) // gz is assumed text scheme
         copy()
