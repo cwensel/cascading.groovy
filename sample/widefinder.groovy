@@ -22,27 +22,46 @@ import cascading.groovy.Cascading
 * along with Cascading.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-// This is a query and the 'content-length' is not returned, so it must be prefetched.
-File input = new File('output/fetched/fetch.txt')
-String output = 'output/counted'
-def dataUrl = 'http://www.i-r-genius.com/cgi-bin/lipsum.cgi?qty=400&unit=k&pl=r&ps=6&pp=n&pt=1&format=t&li=1'
+def dataUrl = 'http://files.cascading.org/apache.200.txt.gz'
+
+File input = new File('output/logs/apache.txt.gz')
+String output = 'output/results'
 
 if( !input.exists() ) // only fetch once
   "curl --create-dirs -o ${input} ${dataUrl}".execute().waitFor()
 
 assert input.exists()
 
+def APACHE_COMMON_REGEX = /^([^ ]*) +[^ ]* +[^ ]* +\[([^]]*)\] +\"([^ ]*) ([^ ]*) [^ ]*\" ([^ ]*) ([^ ]*).*$/
+def APACHE_COMMON_GROUPS = [1, 2, 3, 4, 5, 6]
+def APACHE_COMMON_FIELDS = ["ip", "time", "method", "url", "status", "size"]
+
+//def URL_PATTERN = /\/ongoing\/When\/\d\d\dx\/\d\d\d\d\/\d\d\/\d\d\/[^ .]+/
+def URL_PATTERN = /^\/archives\/.*$/
+
 def cascading = new Cascading()
 def builder = cascading.builder();
 
-Flow flow = builder.flow("wordcount")
+Flow flow = builder.flow("widefinder")
   {
     source(input, scheme: text())
 
-    tokenize(/[.,]*\s+/) // output new tuple for each split
-    group() // group on first field, by default
-    count() // creates 'count' field, by default
-    group(["count"], reverse: true) // group/sort on 'count', reverse the sort order
+    // parse apache log
+    regexParser(pattern: APACHE_COMMON_REGEX, groups: APACHE_COMMON_GROUPS, declared: APACHE_COMMON_FIELDS)
+
+    // throw away tuples that don't match
+    filter(arguments: ["url"], pattern: URL_PATTERN)
+
+    // throw away unused fields
+    project(arguments: ["url"])
+
+    group(groupBy: ["url"])
+
+    // creates 'count' field, by default
+    count()
+
+    // group/sort on 'count', reverse the sort order
+    group(["count"], reverse: true)
 
     sink(output, delete: true)
   }
@@ -56,4 +75,4 @@ try
 catch (Exception exception)
 {
   exception.printStackTrace()
-};
+}

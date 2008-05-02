@@ -44,6 +44,7 @@ import cascading.groovy.factory.regex.RegexParserFactory;
 import cascading.groovy.factory.regex.RegexReplaceFactory;
 import cascading.groovy.factory.regex.RegexSplitGeneratorFactory;
 import cascading.groovy.factory.regex.RegexSplitterFactory;
+import cascading.operation.Debug;
 import cascading.operation.Identity;
 import cascading.operation.aggregator.Average;
 import cascading.operation.aggregator.Count;
@@ -181,6 +182,7 @@ import groovy.util.FactoryBuilderSupport;
  * Functions and Filters (formal/alias). All Functions may take the argument 'declared' to override their default
  * declaredFields value:
  * <ul>
+ * <li>debug - Creates a {@link Debug} Operation that simply prints out each Tuple to stdout.</li>
  * <li>copy - Creates a {@link Identity}. Passes incoming arguments as results.</li>
  * <li>coerce - Creates a {@link Identity}. Coerces incoming arguments to the given types in the 'types' argument.</li>
  * <li>regexParser - Creates a {@link RegexParser}. Expects regex 'pattern' and an int array of regex 'groups'</li>
@@ -278,7 +280,10 @@ public class CascadingBuilder extends FactoryBuilderSupport
     registerFactory( "join", new GroupFactory() );
 
     //   operations
+    registerFactory( "debug", new TypeOperationFactory( Debug.class ) );
+
     registerFactory( "copy", new IdentityFactory() );
+    registerFactory( "project", new IdentityFactory() );
     registerFactory( "coerce", new IdentityFactory() );
 
     registerFactory( "regexParser", new RegexParserFactory() );
