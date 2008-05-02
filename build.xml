@@ -21,7 +21,7 @@
   ~ along with Cascading.  If not, see <http://www.gnu.org/licenses/>.
   -->
 
-<project name="cascadingsh" default="build" basedir=".">
+<project name="cascading.groovy" default="build" basedir=".">
 
   <!-- load properties first -->
   <!--<property file="${user.home}/${name}.build.properties" />-->
@@ -30,7 +30,7 @@
 
   <property environment="env"/>
 
-  <property name="cascadingsh.release.version" value="x.y.z"/>
+  <property name="cascading.groovy.release.version" value="x.y.z"/>
 
   <!-- these are optional, only used if you uncomment the project.class.path filesets below -->
   <property name="hadoop.root" location="${basedir}/../hadoop"/>
@@ -216,7 +216,7 @@
     </copy>
 
 
-    <jar jarfile="${build.dir}/${ant.project.name}-${cascadingsh.release.version}.jar">
+    <jar jarfile="${build.dir}/${ant.project.name}-${cascading.groovy.release.version}.jar">
       <fileset dir="${build.classes}"/>
       <fileset dir="${basedir}" includes="lib/"/>
       <manifest>
@@ -273,9 +273,9 @@
   </target>
 
   <target name="tar" depends="dist" description="creates an archive of current project">
-    <tar destfile="${ant.project.name}-${cascadingsh.release.version}.tgz"
+    <tar destfile="${ant.project.name}-${cascading.groovy.release.version}.tgz"
          compression="gzip">
-      <tarfileset dir="dist/" prefix="${ant.project.name}-${cascadingsh.release.version}">
+      <tarfileset dir="dist/" prefix="${ant.project.name}-${cascading.groovy.release.version}">
         <include name="**/**"/>
       </tarfileset>
     </tar>
