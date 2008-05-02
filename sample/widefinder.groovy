@@ -46,7 +46,7 @@ Flow flow = builder.flow("widefinder")
   {
     source(input, scheme: text())
 
-    // parse apache log
+    // parse apache log, given regex groups are matched with respective field names
     regexParser(pattern: APACHE_COMMON_REGEX, groups: APACHE_COMMON_GROUPS, declared: APACHE_COMMON_FIELDS)
 
     // throw away tuples that don't match
