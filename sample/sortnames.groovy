@@ -27,7 +27,7 @@ def builder = cascading.builder();
 
 Cascade fetchSort = builder.cascade("fetchSort")
   {
-    flow("fetch")
+    flow("fetch", skipIfSinkExists: true)
       {
         source('http://www.census.gov/genealogy/names/dist.all.last', scheme: text())
 
