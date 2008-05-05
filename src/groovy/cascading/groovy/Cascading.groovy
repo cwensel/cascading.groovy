@@ -39,13 +39,17 @@ class Cascading
     return new CascadingBuilder();
   }
 
-  void setInfoLogging()
+  void disableLogging()
+  {
+    setLog4JLevel("cascading", null)
+  }
+
+  void enableInfoLogging()
   {
     setLog4JLevel("cascading", "INFO")
   }
 
-
-  void setDebugLogging()
+  void enableDebugLogging()
   {
     setLog4JLevel("cascading", "DEBUG")
   }
@@ -55,7 +59,7 @@ class Cascading
     def LoggerClass = this.class.classLoader.loadClass("org.apache.log4j.Logger")
     def LevelClass = this.class.classLoader.loadClass("org.apache.log4j.Level")
     def logger = LoggerClass.invokeMethod("getLogger", name)
-    def infoLevel = LevelClass.getField(level).get(null)
+    def infoLevel = level != null ? LevelClass.getField(level).get(null) : null
 
     logger.setLevel(infoLevel)
   }

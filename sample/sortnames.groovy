@@ -33,7 +33,7 @@ Cascade fetchSort = builder.cascade("fetchSort")
 
         copy()
 
-        sink('output/imported', scheme: text(), delete: true)
+        sink('output/imported', scheme: text())
       }
 
     flow("filter")
@@ -47,7 +47,7 @@ Cascade fetchSort = builder.cascade("fetchSort")
       }
   }
 
-cascading.setInfoLogging()
+cascading.enableInfoLogging()
 
 try
 {
