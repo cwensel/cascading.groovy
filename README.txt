@@ -7,7 +7,7 @@ General Information:
 
   This distribution includes all necessary Cascading libraries, and a simple installer.
 
-  To install, first make sure Groovy is installed, the execute
+  To install, first make sure Groovy is installed, then execute
 
    $ groovy setup.groovy
 
