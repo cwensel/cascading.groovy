@@ -272,7 +272,7 @@
 
   </target>
 
-  <target name="tar" depends="dist" description="creates an archive of current project">
+  <target name="package" depends="dist" description="creates an archive of current project">
     <tar destfile="${ant.project.name}-${cascading.groovy.release.version}.tgz"
          compression="gzip">
       <tarfileset dir="dist/" prefix="${ant.project.name}-${cascading.groovy.release.version}">
