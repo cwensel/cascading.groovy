@@ -47,7 +47,7 @@ Cascade fetchSort = builder.cascade("fetchSort")
       }
   }
 
-//cascading.setDebugLogging()
+cascading.setInfoLogging()
 
 try
 {

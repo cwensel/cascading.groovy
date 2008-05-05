@@ -72,7 +72,7 @@ Cascade cascade = builder("widefinder")
       }
   }
 
-//cascading.setDebugLogging()
+cascading.setInfoLogging()
 
 try
 {

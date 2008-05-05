@@ -47,7 +47,7 @@ Flow flow = builder.flow("wordcount")
     sink(output, delete: true)
   }
 
-//cascading.setDebugLogging()
+cascading.setInfoLogging()
 
 try
 {

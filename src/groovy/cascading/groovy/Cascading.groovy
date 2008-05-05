@@ -39,16 +39,25 @@ class Cascading
     return new CascadingBuilder();
   }
 
-  void setInfoLoggin()
+  void setInfoLogging()
   {
-    // must not import package, fails on startup
-    org.apache.log4j.Logger.getLogger("cascading").setLevel(org.apache.log4j.Level.INFO)
+    setLog4JLevel("cascading", "INFO")
   }
+
 
   void setDebugLogging()
   {
-    // must not import package, fails on startup
-    org.apache.log4j.Logger.getLogger("cascading").setLevel(org.apache.log4j.Level.DEBUG)
+    setLog4JLevel("cascading", "DEBUG")
+  }
+
+  private def setLog4JLevel(def name, def level)
+  {
+    def LoggerClass = this.class.classLoader.loadClass("org.apache.log4j.Logger")
+    def LevelClass = this.class.classLoader.loadClass("org.apache.log4j.Level")
+    def logger = LoggerClass.invokeMethod("getLogger", name)
+    def infoLevel = LevelClass.getField(level).get(null)
+
+    logger.setLevel(infoLevel)
   }
 
 }

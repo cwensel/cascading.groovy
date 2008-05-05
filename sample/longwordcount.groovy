@@ -73,7 +73,7 @@ def map = builder.map()
 
 Flow flow = builder.flow(name: "wordcount", map: map, assembly: assembly);
 
-//cascading.setDebugLogging()
+cascading.setInfoLogging()
 
 try
 {
