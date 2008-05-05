@@ -98,7 +98,7 @@ Cascade cascade = builder("cut cascade")
      {
        map
        {
-         source("cut")
+         source(name: "cut")
            {
              lfs(inputFileApache)
                {
@@ -106,7 +106,7 @@ Cascade cascade = builder("cut cascade")
                }
            }
 
-         sink("cut")
+         sink(name: "cut")
            {
              hfs(outputPath + "cut-sort-full", delete: true)
                {
@@ -151,50 +151,50 @@ Additionally, within the eachTuple and everyGroup closure, user custom classes c
 
 <h3>Core components:</h3>
 <ul>
-  <li><strong>cascade</strong> - Create a new Cascade. Expects 'name'.</li>
-  <li><strong>flow</strong> - Create a new Flow. Expects 'name'.</li>
+  <li><strong>cascade</strong> - Create a new {@link cascading.cascade.Cascade}. Expects 'name'.</li>
+  <li><strong>flow</strong> - Create a new {@link cascading.flow.Flow}. Expects 'name'.</li>
 </ul>
 
 <h3>Pipe assembly support:</h3>
 <ul>
   <li><strong>assembly</strong> - Create a pipe assembly for inclusion in a Flow. Expects 'name'.</li>
   <li><strong>branch</strong> - Create a new join or split path in an assembly. Expects 'name'.</li>
-  <li><strong>eachTuple</strong> - Create a new Each Operator. Accepts nested Function or Filter Operations. Expects
-    'arguments' ('args')
-    and 'results' ('res'),
-    where the values are arrays. Optionally 'argumentFields' and 'resultFields' may be given, which are expected to be
-    {@link Fields} instances.
+  <li><strong>eachTuple</strong> - Create a new {@link cascading.pipe.Each} Operator. Accepts nested
+    {@link cascading.operation.Function} or {@link cascading.operatoin.Filter} Operations. Expects 'arguments' ('args')
+    and 'results' ('res'), where the values are arrays. Optionally 'argumentFields' and 'resultFields' may be given,
+    which are expected to be {@link cascading.tuple.Fields} instances.
   </li>
-  <li><strong>everyGroup</strong> - Create a new Every Operator. Accepts nested Aggregator Operations. Expects same
-    arguments as
-    eachTuple.
+  <li><strong>everyGroup</strong> - Create a new {@link cascading.pipe.Every} Operator. Accepts nested {@link
+    cascading.operation.Aggregator} Operations. Expects same arguments as eachTuple.
   </li>
-  <li><strong>operation</strong> - A child to eachTuple or everyGroup allowing for user Operation classes to be included
-    in the
-    assembly.
+  <li><strong>operation</strong> - A child to eachTuple or everyGroup allowing for user
+    {@link cascading.operation.Operation} classes to be included in theassembly.
   </li>
 </ul>
 
 <h3>Tap and Scheme support:</h3>
 <ul>
   <li><strong>map</strong> - Optional parent for source and sink.</li>
-  <li><strong>source</strong> and <strong>sink</strong> - Create a new source Tap. Expects 'name' and optionally child
-    arguments.
+  <li><strong>source</strong> and <strong>sink</strong> - Create a new source {@link cascading.tap.Tap}. Expects 'name'
+    and optionally child arguments.
   </li>
-  <li><strong>hfs</strong> and <strong>lfs</strong> - Creates an Hfs/Lfs Tap. Expects 'path' and optionaly 'delete' if
-    resource should be deleted on
-    exec.
+  <li><strong>hfs</strong> and <strong>lfs</strong> - Creates an {@link cascading.tap.Hfs}/{@link cascading.tap.Lfs}
+    Tap. Expects 'path' and optionaly 'delete' if resource should be deleted on exec.
   </li>
-  <li><strong>text</strong> - Create a TextLine scheme, with default source field 'line'. Optionally accepts 'fields'.
+  <li><strong>text</strong> - Create a {@link cascading.scheme.TextLine} scheme, with default source field 'line'.
+    Optionally accepts a 'fields' argument.
   </li>
-  <li><strong>sequence</strong> - Create a SequenceFile scheme. Expects 'fields'.</li>
-  <li><strong>tap</strong> - Optional child to sink or source that allows for user Tap classes. Expects 'name'.</li>
+  <li><strong>sequence</strong> - Create a {@link cascading.scheme.SequenceFile} scheme. Expects a 'fields' argument.
+  </li>
+  <li><strong>tap</strong> - Optional child to sink or source that allows for user {@link cascading.tap.Tap} classes.
+    Expects a 'name' argument.
+  </li>
 </ul>
 
 <h3>Group and Join support:</h3>
 <ul>
-  <li><strong>group</strong> - Create a new GroupBy. Accepts 'groupBy' and 'sortBy' fields.</li>
-  <li><strong>join</strong> - Create a new CoGroup. Accepts 'groupBy' and 'declared' fields.</li>
+  <li><strong>group</strong> - Create a new {@link cascading.pipe.GroupBy}. Accepts 'groupBy' and 'sortBy' fields.</li>
+  <li><strong>join</strong> - Create a new {@link cascading.pipe.CoGroup}. Accepts 'groupBy' and 'declared' fields.</li>
 </ul>
 
 <h3>Functions and Filters (formal/alias):</h3>
@@ -202,30 +202,42 @@ Additionally, within the eachTuple and everyGroup closure, user custom classes c
 All Functions may take the argument 'declared' to override their default declaredFields value.
 
 <ul>
-  <li><strong>debug</strong> - Creates a {@link Debug} Operation that simply prints out each Tuple to stdout.</li>
-  <li><strong>copy</strong> - Creates a {@link Identity}. Passes incoming arguments as results.</li>
-  <li><strong>coerce</strong> - Creates a {@link Identity}. Coerces incoming arguments to the given types in the 'types'
-    argument.
+  <li><strong>debug</strong> - Creates a {@link cascading.operation.Debug} Operation that simply prints out each Tuple
+    to stdout.
   </li>
-  <li><strong>regexParser</strong> - Creates a {@link RegexParser}. Expects regex 'pattern' and an int array of regex
-    'groups'
+  <li><strong>copy</strong> - Creates a {@link cascading.operation.Identity}. Passes incoming arguments as results.</li>
+  <li><strong>coerce</strong> - Creates a {@link cascading.operation.Identity}. Coerces incoming arguments to the given
+    types in the 'types' argument.
+  </li>
+  <li><strong>regexParser</strong> - Creates a {@link cascading.operation.regex.RegexParser}. Expects regex 'pattern'
+    and an int array of regex 'groups'
   </li>
   <li><strong>regexReplace</strong>/<strong>replace</strong>/<strong>replaceAll</strong>/<strong>replaceFirst</strong> -
-    Creates a {@link RegexReplace}. Expects a regex 'pattern',
-    'replacement' and optionally a boolean 'replaceAll'.
+    Creates a {@link cascading.operation.regex.RegexReplace}. Expects a regex 'pattern', 'replacement' and optionally a
+    boolean 'replaceAll'.
   </li>
-  <li><strong>regexFilter</strong>/<strong>filter</strong> - Creates a {@link RegexFilter}. Expects regex 'pattern'.
+  <li><strong>regexFilter</strong>/<strong>filter</strong> - Creates a {@link cascading.operation.regex.RegexFilter}.
+    Expects regex 'pattern'.
   </li>
-  <li><strong>regexSplitter</strong>/<strong>cut</strong> - Creates a {@link RegexSplitter}. Expects regex 'pattern'
+  <li><strong>regexSplitter</strong>/<strong>cut</strong> - Creates a {@link cascading.operation.regex.RegexSplitter}.
+    Expects regex 'pattern'
   </li>
-  <li><strong>regexSplitGenerator</strong>/<strong>tokenize</strong> - Creates a {@link RegexSplitGenerator}. Expects
+  <li><strong>regexSplitGenerator</strong>/<strong>tokenize</strong> - Creates a {@link
+    cascading.operation.regex.RegexSplitGenerator}. Expects
     regex 'pattern'
   </li>
-  <li><strong>dateFormatter</strong> - Creates a {@link DateFormatter}. Expects a {@link SimpleDateFormat} 'format'.
+  <li><strong>dateFormatter</strong> - Creates a {@link cascading.operation.text.DateFormatter}. Expects a {@link
+    java.text.SimpleDateFormat} 'format'.
   </li>
-  <li><strong>dateParser</strong> - Creates a {@link DateParser}. Expects a {@link SimpleDateFormat} 'format'.</li>
-  <li><strong>fieldFormatter</strong> - Creates a {@link FieldFormatter}. Expects a {@link Formatter} 'format'.</li>
-  <li><strong>fieldJointer</strong> - Creates a {@link FieldJoiner}. Expects a value 'delimiter' string.</li>
+  <li><strong>dateParser</strong> - Creates a {@link cascading.operation.text.DateParser}. Expects a {@link
+    java.text.SimpleDateFormat} 'format'.
+  </li>
+  <li><strong>fieldFormatter</strong> - Creates a {@link cascading.operation.text.FieldFormatter}. Expects a {@link
+    java.text.Formatter} 'format'.
+  </li>
+  <li><strong>fieldJointer</strong> - Creates a {@link cascading.operation.text.FieldJoiner}. Expects a value
+    'delimiter' string.
+  </li>
 </ul>
 
 <h3>Aggregators:</h3>
@@ -236,7 +248,7 @@ All Functions may take the argument 'declared' to override their default declare
   <li><strong>last</strong> - Creates a {@link cascading.operation.aggregator.Last} Aggregator.</li>
   <li><strong>min</strong> - Creates a {@link cascading.operation.aggregator.Min} Aggregator.</li>
   <li><strong>max</strong> - Creates a {@link cascading.operation.aggregator.Max} Aggregator.</li>
-  <li><strong>avg</strong> - Creates a {@link cascading.operation.aggregator.Avg} Aggregator.</li>
+  <li><strong>avg</strong> - Creates a {@link cascading.operation.aggregator.Average} Aggregator.</li>
 </ul>
 
 <!-- Put @see and @since tags down here. -->
