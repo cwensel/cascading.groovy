@@ -39,9 +39,9 @@ Flow flow = builder.flow("wordcount")
   {
     source(input, scheme: text())
 
-    tokenize(/[.,]*\s+/) // output new tuple for each split
-    group() // group on first field, by default
-    count() // creates 'count' field, by default
+    tokenize(/[.,]*\s+/) // output new tuple for each split, result replaces stream by default
+    group() // group on stream
+    count() // count values in group, creates 'count' field by default
     group(["count"], reverse: true) // group/sort on 'count', reverse the sort order
 
     sink(output, delete: true)
