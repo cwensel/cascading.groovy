@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007-2008 Chris K Wensel. All Rights Reserved.
+ * Copyright (c) 2007-2008 Concurrent, Inc. All Rights Reserved.
  *
  * Project and contact information: http://www.cascading.org/
  *
@@ -40,7 +40,8 @@ class LoadHadoop
     if( hadoopBuild.exists() )
     {
       loadJarsInDir(hadoopBuild, loader, '.*-core\\.jar$')
-    } else
+    }
+    else
     {
       loadJarsInDir(hadoopHome, loader, '.*-core\\.jar$')
     }
@@ -50,7 +51,8 @@ class LoadHadoop
     if( System.getenv('HADOOP_CONF') )
     {
       confdir = new File(System.getenv('HADOOP_CONF'))
-    } else
+    }
+    else
     {
       confdir = new File(System.getenv('HADOOP_HOME'), 'conf')
     }

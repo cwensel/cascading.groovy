@@ -2,7 +2,7 @@ import cascading.cascade.Cascade
 import cascading.groovy.Cascading
 
 /*
-* Copyright (c) 2007-2008 Chris K Wensel. All Rights Reserved.
+* Copyright (c) 2007-2008 Concurrent, Inc. All Rights Reserved.
 *
 * Project and contact information: http://www.cascading.org/
 *
