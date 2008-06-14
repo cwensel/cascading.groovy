@@ -47,6 +47,7 @@ try
   cascade = builder("widefinder2")
     {
 
+      // this is possible since s3 returns a content-length
       flow("fetcher", skipIfSinkExists: true) // no unnecessary polling
         {
           source(dataUrl) // gz is assumed text scheme
@@ -60,6 +61,7 @@ try
           {
             source(name: "process", path: logs, scheme: text())
 
+            // save data as binary sequence files for performance reasons
             sink(name: "articles", path: output + "/articles", scheme: sequence(["url", "count"]), delete: true)
             sink(name: "bytes", path: output + "/bytes", scheme: sequence(["url", "bytes"]), delete: true)
             sink(name: "ip", path: output + "/ip", scheme: sequence(["ip", "count"]), delete: true)
@@ -137,11 +139,11 @@ try
         {
           map
           {
-            source(name: "articles", path: output + "/articles", scheme: sequence(["url", "count"]), delete: true)
-            source(name: "bytes", path: output + "/bytes", scheme: sequence(["url", "bytes"]), delete: true)
-            source(name: "ip", path: output + "/ip", scheme: sequence(["ip", "count"]), delete: true)
-            source(name: "referrer", path: output + "/referrer", scheme: sequence(["referrer", "count"]), delete: true)
-            source(name: "404", path: output + "/404", scheme: sequence(["url", "count"]), delete: true)
+            source(name: "articles", path: output + "/articles", scheme: sequence(["url", "count"]))
+            source(name: "bytes", path: output + "/bytes", scheme: sequence(["url", "bytes"]))
+            source(name: "ip", path: output + "/ip", scheme: sequence(["ip", "count"]))
+            source(name: "referrer", path: output + "/referrer", scheme: sequence(["referrer", "count"]))
+            source(name: "404", path: output + "/404", scheme: sequence(["url", "count"]))
 
             sink(name: "articles", path: output + "/top_articles", scheme: text(), delete: true)
             sink(name: "bytes", path: output + "/top_bytes", scheme: text(), delete: true)
