@@ -61,7 +61,6 @@ class TapMapAssemblyTest extends GroovyTestCase
 
     print map;
 
-
     assertEquals("sources", 1, map.sources.size());
     assertEquals("sinks", 1, map.sinks.size());
 
@@ -224,7 +223,7 @@ class TapMapAssemblyTest extends GroovyTestCase
     assertTrue("not sequence", map.sources[ "path1" ].scheme instanceof SequenceFile);
     assertTrue("not text", map.sinks[ "path1" ].scheme instanceof TextLine);
 
-    assertTrue("not delete", map.sources[ "path1" ].deleteOnSinkInit);
+    assertTrue("is delete", !map.sources[ "path1" ].deleteOnSinkInit); // irrelevant, not a sink
     assertTrue("is delete", !map.sinks[ "path1" ].deleteOnSinkInit);
 
   }

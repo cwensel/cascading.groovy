@@ -61,6 +61,6 @@ public class TypeOperationFactory extends OperationFactory
         throw new RuntimeException( String.format( "%s value is required", requiredField ) );
       }
 
-    return (Operation) makeInstance( operationType, getDeclaredFields( attributes ), argument );
+    return (Operation) makeInstance( operationType, declaredFields, argument );
     }
   }

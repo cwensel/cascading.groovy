@@ -58,7 +58,7 @@ public class RegexReplaceFactory extends RegexOperationFactory
     if( replaceAllArg != null )
       replaceAll = replaceAllArg;
 
-    return (Operation) makeInstance( RegexReplace.class, null, pattern, replacement, replaceAll );
+    return (Operation) makeInstance( RegexReplace.class, declaredFields, pattern, replacement, replaceAll );
     }
 
   }

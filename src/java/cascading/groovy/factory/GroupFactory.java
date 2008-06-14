@@ -96,7 +96,7 @@ public class GroupFactory extends BaseFactory
 
       AssemblyFactory.Assembly assembly = (AssemblyFactory.Assembly) parent;
 
-      if( getType().equalsIgnoreCase( "group" ) )
+      if( getType().equalsIgnoreCase( "group" ) || getType().equalsIgnoreCase( "sort" ) )
         return makeGroupBy( assembly );
 
       if( getType().equalsIgnoreCase( "join" ) )
@@ -130,11 +130,13 @@ public class GroupFactory extends BaseFactory
 
     private Pipe makeGroupBy( AssemblyFactory.Assembly assembly )
       {
-      String name = assembly.getType();
+      String name = assembly.getName();
       Pipe pipe = null;
 
       if( assembly.getLastChild() != null )
         pipe = (Pipe) assembly.getLastChild();
+      else
+        pipe = new Pipe( name, assembly.getPreviousPipe() ); // type the split
 
       Fields groupFields = null;
       Fields sortFields = null;

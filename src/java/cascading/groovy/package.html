@@ -1,24 +1,3 @@
-<!--
-  ~ Copyright (c) 2007-2008 Concurrent, Inc. All Rights Reserved.
-  ~
-  ~ Project and contact information: http://www.cascading.org/
-  ~
-  ~ This file is part of the Cascading project.
-  ~
-  ~ Cascading is free software: you can redistribute it and/or modify
-  ~ it under the terms of the GNU General Public License as published by
-  ~ the Free Software Foundation, either version 3 of the License, or
-  ~ (at your option) any later version.
-  ~
-  ~ Cascading is distributed in the hope that it will be useful,
-  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
-  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  ~ GNU General Public License for more details.
-  ~
-  ~ You should have received a copy of the GNU General Public License
-  ~ along with Cascading.  If not, see <http://www.gnu.org/licenses/>.
-  -->
-
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
 <html>
 <head>
@@ -214,7 +193,9 @@ Additionally, within the eachTuple and everyGroup closure, user custom classes c
 
 <h3>Group and Join support:</h3>
 <ul>
-  <li><strong>group</strong> - Create a new {@link cascading.pipe.GroupBy}. Accepts 'groupBy' and 'sortBy' fields.</li>
+  <li><strong>group</strong>/<strong>sort</strong> - Create a new {@link cascading.pipe.GroupBy}. Accepts 'groupBy' and
+    'sortBy' fields.
+  </li>
   <li><strong>join</strong> - Create a new {@link cascading.pipe.CoGroup}. Accepts 'groupBy' and 'declared' fields.</li>
 </ul>
 

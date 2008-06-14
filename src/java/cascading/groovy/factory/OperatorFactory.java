@@ -77,10 +77,10 @@ public class OperatorFactory extends BaseFactory
       String name = assembly.name;
       Pipe pipe = null;
 
-      if( assembly.getPreviousPipe() != null )
-        pipe = new Pipe( name, assembly.getPreviousPipe() ); // type the split
-      else if( assembly.getLastChild() != null )
+      if( assembly.getLastChild() != null )
         pipe = (Pipe) assembly.getLastChild();
+      else if( assembly.getPreviousPipe() != null )
+        pipe = new Pipe( name, assembly.getPreviousPipe() ); // type the split
 
       if( arguments != null )
         argumentFields = new Fields( arguments );

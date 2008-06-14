@@ -24,6 +24,7 @@ package cascading.groovy.factory;
 import java.util.Map;
 
 import cascading.operation.Aggregator;
+import cascading.operation.GroupAssertion;
 import cascading.operation.Operation;
 import cascading.tuple.Fields;
 import groovy.util.FactoryBuilderSupport;
@@ -52,7 +53,7 @@ public class OperationFactory extends OperatorFactory
       return result;
 
     // supports abbreviated syntax
-    String type = result instanceof Aggregator ? "everyGroup" : "eachTuple";
+    String type = result instanceof Aggregator || result instanceof GroupAssertion ? "everyGroup" : "eachTuple";
 
     OperatorHolder operator = (OperatorHolder) super.newInstance( builder, type, value, attributes );
 

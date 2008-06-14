@@ -78,7 +78,7 @@ public abstract class BaseFactory extends AbstractFactory
     Class[] types = new Class[args.length];
 
     for( int i = 0; i < args.length; i++ )
-      types[ i ] = args[ i ].getClass();
+      types[ i ] = makePrimitive( args[ i ].getClass() );
 
     try
       {
@@ -135,5 +135,23 @@ public abstract class BaseFactory extends AbstractFactory
 
       break;
       }
+    }
+
+  protected Class makePrimitive( Class type )
+    {
+    if( type == Integer.class )
+      return int.class;
+    else if( type == Long.class )
+      return long.class;
+    else if( type == Double.class )
+      return double.class;
+    else if( type == Float.class )
+      return float.class;
+    else if( type == Short.class )
+      return short.class;
+    else if( type == Boolean.class )
+      return boolean.class;
+
+    return type;
     }
   }
