@@ -165,4 +165,24 @@ class FlowAssemblyTest extends GroovyTestCase
     assertEquals("sinks", 1, flow.sinks.size());
   }
 
+
+  void testFlowBriefWithAssertions()
+  {
+    def builder = new CascadingBuilder();
+
+    def flow = builder.flow("flow")
+      {
+        source(path: "input/path", delete: true, fields: ["f1"])
+
+        regexParser(args: ["f1"], res: ["f1", "g1"], decl: ["g1"], pattern: /.*/, groups: [0, 1])
+        assertNotNullValues(args: ["f1"], level: STRICT)
+        group(by: ["f1"], sort: ["g1"])
+        sum(args: ["g1"], res: ["f1", "sum"])
+
+        sink(path: "file://output/path", scheme: text())
+      }
+
+    assertEquals("sources", 1, flow.sources.size());
+    assertEquals("sinks", 1, flow.sinks.size());
+  }
 }

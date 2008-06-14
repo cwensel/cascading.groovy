@@ -34,11 +34,15 @@ import cascading.groovy.factory.SchemeFactory;
 import cascading.groovy.factory.TapFactory;
 import cascading.groovy.factory.TapMapFactory;
 import cascading.groovy.factory.TypeOperationFactory;
+import cascading.groovy.factory.assertion.AssertEqualsAllFactory;
+import cascading.groovy.factory.assertion.AssertEqualsFactory;
+import cascading.groovy.factory.assertion.AssertMatchesFactory;
 import cascading.groovy.factory.regex.RegexFilterFactory;
 import cascading.groovy.factory.regex.RegexParserFactory;
 import cascading.groovy.factory.regex.RegexReplaceFactory;
 import cascading.groovy.factory.regex.RegexSplitGeneratorFactory;
 import cascading.groovy.factory.regex.RegexSplitterFactory;
+import cascading.operation.AssertionLevel;
 import cascading.operation.Debug;
 import cascading.operation.aggregator.Average;
 import cascading.operation.aggregator.Count;
@@ -47,6 +51,13 @@ import cascading.operation.aggregator.Last;
 import cascading.operation.aggregator.Max;
 import cascading.operation.aggregator.Min;
 import cascading.operation.aggregator.Sum;
+import cascading.operation.assertion.AssertMatches;
+import cascading.operation.assertion.AssertMatchesAll;
+import cascading.operation.assertion.AssertNotNull;
+import cascading.operation.assertion.AssertNull;
+import cascading.operation.assertion.AssertSizeEquals;
+import cascading.operation.assertion.AssertSizeLessThan;
+import cascading.operation.assertion.AssertSizeMoreThan;
 import cascading.operation.text.DateFormatter;
 import cascading.operation.text.DateParser;
 import cascading.operation.text.FieldFormatter;
@@ -66,6 +77,10 @@ public class CascadingBuilder extends FactoryBuilderSupport
   public static final Fields RESULTS = Fields.RESULTS;
   public static final Fields FIRST = Fields.FIRST;
   public static final Fields LAST = Fields.LAST;
+
+  public static final AssertionLevel STRICT = AssertionLevel.STRICT;
+  public static final AssertionLevel VALID = AssertionLevel.VALID;
+  public static final AssertionLevel NONE = AssertionLevel.NONE;
 
   public CascadingBuilder()
     {
@@ -159,6 +174,17 @@ public class CascadingBuilder extends FactoryBuilderSupport
     registerFactory( "dateParser", new TypeOperationFactory( DateParser.class, "format" ) );
     registerFactory( "fieldFormatter", new TypeOperationFactory( FieldFormatter.class, "format" ) );
     registerFactory( "fieldJoiner", new TypeOperationFactory( FieldJoiner.class, "delimiter" ) );
+
+    // assertions
+    registerFactory( "assertNullValues", new TypeOperationFactory( AssertNull.class ) );
+    registerFactory( "assertNotNullValues", new TypeOperationFactory( AssertNotNull.class ) );
+    registerFactory( "assertSizeEquals", new TypeOperationFactory( AssertSizeEquals.class, "size" ) );
+    registerFactory( "assertSizeLessThan", new TypeOperationFactory( AssertSizeLessThan.class, "size" ) );
+    registerFactory( "assertSizeMoreThan", new TypeOperationFactory( AssertSizeMoreThan.class, "size" ) );
+    registerFactory( "assertMatches", new AssertMatchesFactory( AssertMatches.class ) );
+    registerFactory( "assertMatchesAll", new AssertMatchesFactory( AssertMatchesAll.class ) );
+    registerFactory( "assertEqualsValues", new AssertEqualsFactory() ); // expects values
+    registerFactory( "assertEqualsAll", new AssertEqualsAllFactory() ); // expects value
 
     // TapMap
     registerFactory( "map", new TapMapFactory() );

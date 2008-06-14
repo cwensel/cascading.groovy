@@ -24,6 +24,7 @@ package cascading.groovy.factory;
 import java.util.Arrays;
 import java.util.Map;
 
+import cascading.operation.AssertionLevel;
 import cascading.operation.Operation;
 import cascading.pipe.Each;
 import cascading.pipe.Every;
@@ -44,6 +45,8 @@ public class OperatorFactory extends BaseFactory
     rename( attributes, Fields.class, "argumentFields", "arguments" );
     rename( attributes, Fields.class, "resultFields", "results" );
 
+    rename( attributes, "assertionLevel", "level" );
+
     return new OperatorHolder( (String) type );
     }
 
@@ -56,6 +59,7 @@ public class OperatorFactory extends BaseFactory
     Comparable[] results;
     Fields argumentFields;
     Fields resultFields;
+    AssertionLevel assertionLevel;
 
     public OperatorHolder( String type )
       {
@@ -89,10 +93,10 @@ public class OperatorFactory extends BaseFactory
         resultFields = new Fields( results );
 
       if( getType().equalsIgnoreCase( "eachTuple" ) )
-        return makePipe( Each.class, name, pipe, argumentFields, getOperation(), resultFields );
+        return makePipe( Each.class, name, pipe, argumentFields, assertionLevel, getOperation(), resultFields );
 
       if( getType().equalsIgnoreCase( "everyGroup" ) )
-        return makePipe( Every.class, name, pipe, argumentFields, getOperation(), resultFields );
+        return makePipe( Every.class, name, pipe, argumentFields, assertionLevel, getOperation(), resultFields );
 
       throw new RuntimeException( "type: " + getType() + " was not found" );
       }

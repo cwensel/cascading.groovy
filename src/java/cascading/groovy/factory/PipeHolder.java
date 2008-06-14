@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 import cascading.operation.Aggregator;
+import cascading.operation.Assertion;
 import cascading.operation.Filter;
 import cascading.operation.Function;
 import cascading.operation.Operation;
@@ -116,6 +117,8 @@ public abstract class PipeHolder extends BaseHolder
         types[ i ] = Filter.class;
       else if( Aggregator.class.isAssignableFrom( types[ i ] ) )
         types[ i ] = Aggregator.class;
+      else if( Assertion.class.isAssignableFrom( types[ i ] ) )
+        types[ i ] = Assertion.class;
       else if( Boolean.class.isAssignableFrom( types[ i ] ) )
         types[ i ] = Boolean.TYPE;
       }

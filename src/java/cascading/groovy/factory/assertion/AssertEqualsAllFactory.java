@@ -19,25 +19,39 @@
  * along with Cascading.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package cascading.groovy.factory.regex;
+package cascading.groovy.factory.assertion;
 
 import java.util.Map;
 
+import cascading.groovy.factory.OperationFactory;
 import cascading.operation.Operation;
-import cascading.operation.regex.RegexFilter;
+import cascading.operation.assertion.AssertEquals;
 import cascading.tuple.Fields;
 
 /**
  *
  */
-public class RegexFilterFactory extends RegexOperationFactory
+public class AssertEqualsAllFactory extends OperationFactory
   {
+  protected Object getValues( Object value, Map attributes )
+    {
+    Object values = attributes.remove( "value" );
+
+    if( values == null )
+      values = value;
+
+    if( values == null )
+      throw new RuntimeException( "values value is required" );
+
+    return values;
+    }
+
   @Override
   protected Operation makeOperation( Object value, Map attributes, Fields declaredFields )
     {
-    String pattern = getPattern( value, attributes );
-    Boolean removeMatch = (Boolean) attributes.remove( "removeMatch" );
+    Object values = getValues( value, attributes );
 
-    return (Operation) makeInstance( RegexFilter.class, null, pattern, removeMatch );
+    return (Operation) makeInstance( AssertEquals.class, null, values );
     }
+
   }
