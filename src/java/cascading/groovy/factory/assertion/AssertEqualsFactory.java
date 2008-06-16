@@ -28,7 +28,6 @@ import cascading.groovy.factory.OperationFactory;
 import cascading.operation.Operation;
 import cascading.operation.assertion.AssertEquals;
 import cascading.tuple.Fields;
-import groovyjarjarantlr.collections.List;
 
 /**
  *
@@ -45,7 +44,7 @@ public class AssertEqualsFactory extends OperationFactory
     if( values == null )
       throw new RuntimeException( "values value is required" );
 
-    if( !( values instanceof List ) )
+    if( !( values instanceof ArrayList ) )
       throw new RuntimeException( "values must be a list" );
 
     ArrayList list = (ArrayList) values;
