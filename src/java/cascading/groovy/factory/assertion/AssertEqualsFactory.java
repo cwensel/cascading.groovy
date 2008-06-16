@@ -57,7 +57,7 @@ public class AssertEqualsFactory extends OperationFactory
     {
     Comparable[] values = getValues( value, attributes );
 
-    return (Operation) makeInstance( AssertEquals.class, null, values );
+    return (Operation) makeInstance( AssertEquals.class, declaredFields, (Object[]) values );
     }
 
   }
