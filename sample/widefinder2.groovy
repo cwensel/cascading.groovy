@@ -23,21 +23,21 @@ import cascading.groovy.Cascading
 * along with Cascading.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-def dataUrl = 'http://files.cascading.org/apache.200.txt.gz'
+def dataUrl = 'http://files.cascading.org/apache.200.txt.gz';
 
-String logs = 'output/logs/'
-String output = 'output/results'
+String logs = 'output/logs/';
+String output = 'output/results';
 
-def APACHE_COMMON_REGEX = /^([^ ]*) +[^ ]* +[^ ]* +\[([^]]*)\] +\"([^ ]*) ([^ ]*) [^ ]*\" ([^ ]*) ([^ ]*) \"([^ ]*)\".*$/
-def APACHE_COMMON_GROUPS = [1, 2, 3, 4, 5, 6, 7]
-def APACHE_COMMON_FIELDS = ["ip", "time", "method", "url", "status", "size", "referrer"]
+def APACHE_COMMON_REGEX = /^([^ ]*) +[^ ]* +[^ ]* +\[([^]]*)\] +\"([^ ]*) ([^ ]*) [^ ]*\" ([^ ]*) ([^ ]*) \"([^ ]*)\".*$/;
+def APACHE_COMMON_GROUPS = [1, 2, 3, 4, 5, 6, 7];
+def APACHE_COMMON_FIELDS = ["ip", "time", "method", "url", "status", "size", "referrer"];
 
 //def URL_PATTERN = /\/ongoing\/When\/\d\d\dx\/\d\d\d\d\/\d\d\/\d\d\/[^ .]+/
-def URL_PATTERN = /^\/archives\/.*$/
+def URL_PATTERN = /^\/archives\/.*$/;
 
-def EXCEPT_URL_PATTERN = /(-)|(^http:\/\/(www.)?example.org.*)/
+def EXCEPT_URL_PATTERN = /(-)|(^http:\/\/(www.)?example.org.*)/;
 
-def cascading = new Cascading()
+def cascading = new Cascading();
 def builder = cascading.builder();
 
 Cascade cascade;
@@ -91,7 +91,7 @@ try
                       sum(args: ["clean_size"], decl: ["bytes"])
                     }
 
-                  branch("valid_articles")
+                  branch("only_articles")
                     {
                       // keep articles
                       filter(args: ["url"], pattern: URL_PATTERN)
@@ -186,7 +186,7 @@ try
 catch (FlowException exception)
 {
   print exception.getMessage();
-  exception.writeDOT("widefinder2.dot") // write graph to disk for inspection
+  exception.writeDOT("widefinder2.dot"); // write graph to disk for inspection
   return;
 }
 
@@ -194,9 +194,9 @@ cascading.enableInfoLogging()
 
 try
 {
-  cascade.complete() // execute the flow
+  cascade.complete(); // execute the flow
 }
 catch (Exception exception)
 {
-  exception.printStackTrace()
+  exception.printStackTrace();
 }
