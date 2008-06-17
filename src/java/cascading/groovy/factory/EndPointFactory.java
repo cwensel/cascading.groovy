@@ -46,7 +46,17 @@ public class EndPointFactory extends BaseFactory
         sourceScheme = tapMap.getSource().getScheme();
       }
 
+    retype( attributes );
+
     return new EndPointHolder( (String) type, value, sourceScheme );
+    }
+
+  void retype( Map attributes )
+    {
+    Object tap = attributes.get( "tap" );
+
+    if( tap instanceof TapFactory.TapHolder )
+      attributes.put( "tap", ( (TapFactory.TapHolder) tap ).createTap() );
     }
 
   public class EndPointHolder extends BaseHolder

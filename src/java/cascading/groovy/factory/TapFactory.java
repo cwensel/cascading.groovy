@@ -53,6 +53,7 @@ public class TapFactory extends BaseFactory
     Scheme scheme;
     Comparable[] fields;
     boolean delete = false;
+    private Tap tap;
 
     public TapHolder( String type )
       {
@@ -103,11 +104,17 @@ public class TapFactory extends BaseFactory
 
     public void handleParent( Object parent )
       {
-      ( (EndPointFactory.EndPointHolder) parent ).setTap( createTap() );
+      tap = createTap();
+
+      if( parent instanceof EndPointFactory.EndPointHolder )
+        ( (EndPointFactory.EndPointHolder) parent ).setTap( tap );
       }
 
-    private Tap createTap()
+    public Tap createTap()
       {
+      if( tap != null )
+        return tap;
+
       Tap[] taps = new Tap[paths.size()];
 
       for( int i = 0; i < paths.size(); i++ )

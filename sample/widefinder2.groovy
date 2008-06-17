@@ -46,7 +46,6 @@ try
 {
   cascade = builder("widefinder2")
     {
-
       // this is possible since s3 returns a content-length
       flow("fetcher", skipIfSinkExists: true) // no unnecessary polling
         {
@@ -55,18 +54,24 @@ try
           sink(logs) // inherits scheme from source
         }
 
+      // save data as binary sequence files for performance reasons
+      def articles = hfs(path: output + "/articles", scheme: sequence(["url", "count"]), delete: true)
+      def bytes = hfs(path: output + "/bytes", scheme: sequence(["url", "bytes"]), delete: true)
+      def ip = hfs(path: output + "/ip", scheme: sequence(["ip", "count"]), delete: true);
+      def referrer = hfs(path: output + "/referrer", scheme: sequence(["referrer", "count"]), delete: true)
+      def ret404 = hfs(path: output + "/404", scheme: sequence(["url", "count"]), delete: true)
+
       flow("counter")
         {
           map
           {
             source(name: "process", path: logs, scheme: text())
 
-            // save data as binary sequence files for performance reasons
-            sink(name: "articles", path: output + "/articles", scheme: sequence(["url", "count"]), delete: true)
-            sink(name: "bytes", path: output + "/bytes", scheme: sequence(["url", "bytes"]), delete: true)
-            sink(name: "ip", path: output + "/ip", scheme: sequence(["ip", "count"]), delete: true)
-            sink(name: "referrer", path: output + "/referrer", scheme: sequence(["referrer", "count"]), delete: true)
-            sink(name: "404", path: output + "/404", scheme: sequence(["url", "count"]), delete: true)
+            sink(name: "articles", tap: articles)
+            sink(name: "bytes", tap: bytes)
+            sink(name: "ip", tap: ip)
+            sink(name: "referrer", tap: referrer)
+            sink(name: "404", tap: ret404)
           }
 
           assembly("counter")
@@ -130,20 +135,18 @@ try
 
                   count(args: ["url"])
                 }
-
             }
-
         }
 
       flow("reporter")
         {
           map
           {
-            source(name: "articles", path: output + "/articles", scheme: sequence(["url", "count"]))
-            source(name: "bytes", path: output + "/bytes", scheme: sequence(["url", "bytes"]))
-            source(name: "ip", path: output + "/ip", scheme: sequence(["ip", "count"]))
-            source(name: "referrer", path: output + "/referrer", scheme: sequence(["referrer", "count"]))
-            source(name: "404", path: output + "/404", scheme: sequence(["url", "count"]))
+            source(name: "articles", tap: articles)
+            source(name: "bytes", tap: bytes)
+            source(name: "ip", tap: ip)
+            source(name: "referrer", tap: referrer)
+            source(name: "404", tap: ret404)
 
             sink(name: "articles", path: output + "/top_articles", scheme: text(), delete: true)
             sink(name: "bytes", path: output + "/top_bytes", scheme: text(), delete: true)
@@ -181,7 +184,6 @@ try
             }
         }
     }
-
 }
 catch (FlowException exception)
 {
