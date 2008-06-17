@@ -104,7 +104,7 @@ class CascadeTest extends GroovyTestCase
 
   void testCutSortFull()
   {
-//    Logger.getLogger("cascading").setLevel(Level.DEBUG)
+//    Logger.getLogger("cascading").setAssertionLevel(Level.DEBUG)
     def builder = new CascadingBuilder();
 
     Cascade cascade = builder("cut cascade")
@@ -155,7 +155,7 @@ class CascadeTest extends GroovyTestCase
 
   void testJoinFull()
   {
-//    Logger.getLogger("cascading").setLevel(Level.DEBUG)
+//    Logger.getLogger("cascading").setAssertionLevel(Level.DEBUG)
     def builder = new CascadingBuilder();
 
     Cascade cascade = builder("join cascade")

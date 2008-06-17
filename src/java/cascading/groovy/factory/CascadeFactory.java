@@ -52,6 +52,8 @@ public class CascadeFactory extends BaseFactory
     if( value == null )
       value = name;
 
+    rename( attributes, "assertionLevel", "level" );
+
     return new CascadeHolder( (String) type, (String) value );
     }
 
@@ -60,7 +62,7 @@ public class CascadeFactory extends BaseFactory
     String name;
     List<Flow> flows = new ArrayList<Flow>();
     List<FlowFactory.FlowHolder> flowHolders = new ArrayList<FlowFactory.FlowHolder>();
-    AssertionLevel level;
+    AssertionLevel assertionLevel;
 
     public CascadeHolder( String type, String name )
       {
@@ -79,7 +81,7 @@ public class CascadeFactory extends BaseFactory
         {
         FlowFactory.FlowHolder flowHolder = (FlowFactory.FlowHolder) child;
 
-        flowHolder.setLevel( level );
+        flowHolder.setAssertionLevel( assertionLevel );
         flowHolders.add( flowHolder );
         }
       }

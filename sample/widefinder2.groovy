@@ -44,7 +44,7 @@ Cascade cascade;
 
 try
 {
-  cascade = builder("widefinder2", level: builder.STRICT) // default is STRICT
+  cascade = builder("widefinder2", assertionLevel: builder.STRICT) // default is STRICT
     {
       // this is possible since s3 returns a content-length
       flow("fetcher", skipIfSinkExists: true) // no unnecessary polling

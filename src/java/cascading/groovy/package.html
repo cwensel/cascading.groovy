@@ -81,6 +81,7 @@ Cascade cascade = builder("cut cascade")
         group([0])
 
         sink(outputPath + "cut-sort", delete: true)
+//        trap(outputPath + "cut-sort-trap", delete: true) // optional sink to capture bad data
       }
   }
 
@@ -113,6 +114,14 @@ Cascade cascade = builder("cut cascade")
                  text()
                }
            }
+
+//        trap(name: "cut")  // optional sink to capture bad data
+//          {
+//            hfs(outputPath + "cut-sort-full-trap", delete: true)
+//              {
+//                text()
+//              }
+//          }
        }
 
        assembly(name: "cut")
@@ -138,6 +147,7 @@ cascade.complete()
 This last form is necessary in order to support complex paths within and between flows.
 
 <p/>
+
 Additionally, within the eachTuple and everyGroup closure, user custom classes can be specified.
 
 <pre>
@@ -258,6 +268,9 @@ All Functions may take the argument 'declared' to override their default declare
 </ul>
 
 <h3>Assertions:</h3>
+
+All Assertions require the argument 'assertionLevel' (or abbreviated as 'level').
+
 <ul>
   <li><strong>assertNullValues</strong> - Creates a {@link cascading.operation.assertion.AssertNull} Assertion.</li>
   <li><strong>assertNotNullValues</strong> - Creates a {@link cascading.operation.assertion.AssertNotNull} Assertion.

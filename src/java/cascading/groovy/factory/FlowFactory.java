@@ -39,6 +39,8 @@ public class FlowFactory extends BaseFactory
 
   public Object newInstance( FactoryBuilderSupport builder, Object type, Object value, Map attributes ) throws InstantiationException, IllegalAccessException
     {
+    rename( attributes, "assertionLevel", "level" );
+
     return new FlowHolder( (String) type, (String) value );
     }
 
@@ -48,7 +50,7 @@ public class FlowFactory extends BaseFactory
     boolean skipIfSinkExists = false;
     AssemblyFactory.Assembly assembly = new AssemblyFactory.Assembly();
     TapMap map = new TapMap();
-    AssertionLevel level;
+    AssertionLevel assertionLevel;
 
     Flow flow;
 
@@ -74,9 +76,9 @@ public class FlowFactory extends BaseFactory
       this.map = map;
       }
 
-    public void setLevel( AssertionLevel level )
+    public void setAssertionLevel( AssertionLevel assertionLevel )
       {
-      this.level = level;
+      this.assertionLevel = assertionLevel;
       }
 
     public void setChild( Object child )
@@ -105,8 +107,8 @@ public class FlowFactory extends BaseFactory
 
       FlowConnector flowConnector = new FlowConnector();
 
-      if( level != null )
-        flowConnector.setAssertionLevel( level );
+      if( assertionLevel != null )
+        flowConnector.setAssertionLevel( assertionLevel );
 
       if( map.getTraps().size() == 0 )
         {
