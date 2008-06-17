@@ -36,6 +36,7 @@ import cascading.groovy.factory.TapMapFactory;
 import cascading.groovy.factory.TypeOperationFactory;
 import cascading.groovy.factory.assertion.AssertEqualsAllFactory;
 import cascading.groovy.factory.assertion.AssertEqualsFactory;
+import cascading.groovy.factory.assertion.AssertExpressionFactory;
 import cascading.groovy.factory.assertion.AssertMatchesFactory;
 import cascading.groovy.factory.regex.RegexFilterFactory;
 import cascading.groovy.factory.regex.RegexParserFactory;
@@ -185,11 +186,13 @@ public class CascadingBuilder extends FactoryBuilderSupport
     registerFactory( "assertMatchesAll", new AssertMatchesFactory( AssertMatchesAll.class ) );
     registerFactory( "assertEqualsValues", new AssertEqualsFactory() ); // expects values
     registerFactory( "assertEqualsAll", new AssertEqualsAllFactory() ); // expects value
+    registerFactory( "assertExpression", new AssertExpressionFactory() ); // expects value
 
     // TapMap
     registerFactory( "map", new TapMapFactory() );
     registerFactory( "source", new EndPointFactory() );
     registerFactory( "sink", new EndPointFactory() );
+    registerFactory( "trap", new EndPointFactory() );
     registerFactory( "tap", new TapFactory() );
 
     registerFactory( "hfs", new TapFactory() );

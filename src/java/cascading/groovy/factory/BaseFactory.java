@@ -38,7 +38,12 @@ public abstract class BaseFactory extends AbstractFactory
 
   protected Fields getDeclaredFields( Map attributes )
     {
-    return createFields( (ArrayList) findRemove( attributes, "declared", "decl" ) );
+    Object fields = findRemove( attributes, "declared", "decl" );
+
+    if( fields instanceof ArrayList )
+      return createFields( (ArrayList) fields );
+    else
+      return (Fields) fields;
     }
 
   protected Fields createFields( List fieldsList )
@@ -92,7 +97,6 @@ public abstract class BaseFactory extends AbstractFactory
 
   protected Object findRemove( Map attributes, String... args )
     {
-
     for( String arg : args )
       {
       Object result = attributes.remove( arg );

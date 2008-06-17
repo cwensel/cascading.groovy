@@ -26,38 +26,50 @@ import java.util.Map;
 
 import cascading.groovy.factory.OperationFactory;
 import cascading.operation.Operation;
-import cascading.operation.assertion.AssertEquals;
+import cascading.operation.assertion.AssertExpression;
 import cascading.tuple.Fields;
 
 /**
  *
  */
-public class AssertEqualsFactory extends OperationFactory
+public class AssertExpressionFactory extends OperationFactory
   {
-  protected Comparable[] getValues( Object value, Map attributes )
+  protected String getExpression( Object value, Map attributes )
     {
-    Object values = attributes.remove( "values" );
+    String expression = (String) attributes.remove( "expression" );
+
+    if( expression == null )
+      expression = (String) value;
+
+    if( expression == null )
+      throw new RuntimeException( "expression value is required" );
+
+    return expression;
+    }
+
+  protected Class[] getTypes( Object value, Map attributes )
+    {
+    Object values = attributes.remove( "types" );
 
     if( values == null )
-      values = value;
-
-    if( values == null )
-      throw new RuntimeException( "values value is required" );
+      throw new RuntimeException( "types value is required" );
 
     if( !( values instanceof ArrayList ) )
-      throw new RuntimeException( "values must be a list" );
+      throw new RuntimeException( "types must be a list" );
 
     ArrayList list = (ArrayList) values;
 
-    return (Comparable[]) list.toArray( new Comparable[list.size()] );
+    return (Class[]) list.toArray( new Class[list.size()] );
     }
 
   @Override
   protected Operation makeOperation( Object value, Map attributes, Fields declaredFields )
     {
-    Comparable[] values = getValues( value, attributes );
+    String expression = getExpression( value, attributes );
 
-    return (Operation) makeInstance( AssertEquals.class, null, (Object[]) values );
+    Class[] types = getTypes( value, attributes );
+
+    return (Operation) makeInstance( AssertExpression.class, null, expression, (Object) types );
     }
 
   }

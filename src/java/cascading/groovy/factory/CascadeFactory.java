@@ -28,6 +28,7 @@ import java.util.Map;
 import cascading.cascade.Cascade;
 import cascading.cascade.CascadeConnector;
 import cascading.flow.Flow;
+import cascading.operation.AssertionLevel;
 import groovy.util.FactoryBuilderSupport;
 
 /**
@@ -59,6 +60,7 @@ public class CascadeFactory extends BaseFactory
     String name;
     List<Flow> flows = new ArrayList<Flow>();
     List<FlowFactory.FlowHolder> flowHolders = new ArrayList<FlowFactory.FlowHolder>();
+    AssertionLevel level;
 
     public CascadeHolder( String type, String name )
       {
@@ -74,7 +76,12 @@ public class CascadeFactory extends BaseFactory
     public void setChild( Object child )
       {
       if( child instanceof FlowFactory.FlowHolder )
-        flowHolders.add( (FlowFactory.FlowHolder) child );
+        {
+        FlowFactory.FlowHolder flowHolder = (FlowFactory.FlowHolder) child;
+
+        flowHolder.setLevel( level );
+        flowHolders.add( flowHolder );
+        }
       }
 
     public void handleParent( Object parent )

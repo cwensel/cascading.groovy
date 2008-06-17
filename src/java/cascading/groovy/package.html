@@ -151,8 +151,12 @@ Additionally, within the eachTuple and everyGroup closure, user custom classes c
 
 <h3>Core components:</h3>
 <ul>
-  <li><strong>cascade</strong> - Create a new {@link cascading.cascade.Cascade}. Expects 'name'.</li>
-  <li><strong>flow</strong> - Create a new {@link cascading.flow.Flow}. Expects 'name'.</li>
+  <li><strong>cascade</strong> - Create a new {@link cascading.cascade.Cascade}. Expects 'name' and optionally an
+    {@link cascading.operation.AssertionLevel} 'level'.
+  </li>
+  <li><strong>flow</strong> - Create a new {@link cascading.flow.Flow}. Expects 'name' and optionally an
+    {@link cascading.operation.AssertionLevel} 'level'.
+  </li>
 </ul>
 
 <h3>Pipe assembly support:</h3>
@@ -266,11 +270,18 @@ All Functions may take the argument 'declared' to override their default declare
   <li><strong>assertSizeMoreThan</strong> - Creates a {@link cascading.operation.assertion.AssertSizeMoreThan}
     Assertion.
   </li>
-  <li><strong>assertMatches</strong> - Creates a {@link cascading.operation.assertion.AssertMatches} Assertion.</li>
+  <li><strong>assertMatches</strong> - Creates a {@link cascading.operation.assertion.AssertMatches} Assertion.
+    Expects 'pattern' and optionally 'negateMatch'.
+  </li>
   <li><strong>assertMatchesAll</strong> - Creates a {@link cascading.operation.assertion.AssertMatchesAll} Assertion.
+    Expects 'pattern' and optionally 'negateMatch'.
   </li>
   <li><strong>assertEqualsValues</strong> - Creates a {@link cascading.operation.assertion.AssertEquals} Assertion.</li>
   <li><strong>assertEqualsAll</strong> - Creates a {@link cascading.operation.assertion.AssertEqualsAll} Assertion.</li>
+  <li><strong>assertExpression</strong> - Creates a {@link cascading.operation.assertion.AssertExpression} Assertion.
+    Expects a java expression string named 'expression' and an array of types for the listed arguments named 'types'.
+  </li>
+
 </ul>
 
 <!-- Put @see and @since tags down here. -->

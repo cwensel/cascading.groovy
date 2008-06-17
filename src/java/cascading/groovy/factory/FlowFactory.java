@@ -25,6 +25,7 @@ import java.util.Map;
 
 import cascading.flow.Flow;
 import cascading.flow.FlowConnector;
+import cascading.operation.AssertionLevel;
 import groovy.util.FactoryBuilderSupport;
 
 /**
@@ -47,6 +48,7 @@ public class FlowFactory extends BaseFactory
     boolean skipIfSinkExists = false;
     AssemblyFactory.Assembly assembly = new AssemblyFactory.Assembly();
     TapMap map = new TapMap();
+    AssertionLevel level;
 
     Flow flow;
 
@@ -72,6 +74,11 @@ public class FlowFactory extends BaseFactory
       this.map = map;
       }
 
+    public void setLevel( AssertionLevel level )
+      {
+      this.level = level;
+      }
+
     public void setChild( Object child )
       {
       if( child instanceof AssemblyFactory.Assembly )
@@ -88,7 +95,7 @@ public class FlowFactory extends BaseFactory
 
     public void handleParent( Object parent )
       {
-      //To change body of implemented methods use File | Settings | File Templates.
+
       }
 
     public Flow connectFlow()
@@ -98,14 +105,29 @@ public class FlowFactory extends BaseFactory
 
       FlowConnector flowConnector = new FlowConnector();
 
-      if( map.getSources().size() == 1 && map.getSinks().size() == 1 && assembly.getTails().size() == 1 )
-        flow = flowConnector.connect( name, map.getSource(), map.getSink(), assembly.getTail() );
-      else if( map.getSources().size() == 1 )
-        flow = flowConnector.connect( name, map.getSource(), map.getSinks(), assembly.getTailsArray() );
-      else if( map.getSinks().size() == 1 )
-        flow = flowConnector.connect( name, map.getSources(), map.getSink(), assembly.getTail() );
+      if( level != null )
+        flowConnector.setAssertionLevel( level );
+
+      if( map.getTraps().size() == 0 )
+        {
+        if( map.getSources().size() == 1 && map.getSinks().size() == 1 && assembly.getTails().size() == 1 )
+          flow = flowConnector.connect( name, map.getSource(), map.getSink(), assembly.getTail() );
+        else if( map.getSources().size() == 1 )
+          flow = flowConnector.connect( name, map.getSource(), map.getSinks(), assembly.getTailsArray() );
+        else if( map.getSinks().size() == 1 )
+          flow = flowConnector.connect( name, map.getSources(), map.getSink(), assembly.getTail() );
+        else
+          flow = flowConnector.connect( name, map.getSources(), map.getSinks(), assembly.getTailsArray() );
+        }
       else
-        flow = flowConnector.connect( name, map.getSources(), map.getSinks(), assembly.getTailsArray() );
+        if( map.getSources().size() == 1 && map.getSinks().size() == 1 && map.getTraps().size() == 1 && assembly.getTails().size() == 1 )
+          {
+          flow = flowConnector.connect( name, map.getSource(), map.getSink(), map.getTrap(), assembly.getTail() );
+          }
+        else
+          {
+          flow = flowConnector.connect( name, map.getSources(), map.getSinks(), map.getTraps(), assembly.getTailsArray() );
+          }
 
       flow.setSkipIfSinkExists( skipIfSinkExists );
 

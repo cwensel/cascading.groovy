@@ -44,7 +44,7 @@ Cascade cascade;
 
 try
 {
-  cascade = builder("widefinder2")
+  cascade = builder("widefinder2", level: builder.STRICT) // default is STRICT
     {
       // this is possible since s3 returns a content-length
       flow("fetcher", skipIfSinkExists: true) // no unnecessary polling
@@ -54,7 +54,7 @@ try
           sink(logs) // inherits scheme from source
         }
 
-      // save data as binary sequence files for performance reasons
+      // save data as binary sequence files for efficiency reasons
       def articles = hfs(path: output + "/articles", scheme: sequence(["url", "count"]), delete: true)
       def bytes = hfs(path: output + "/bytes", scheme: sequence(["url", "bytes"]), delete: true)
       def ip = hfs(path: output + "/ip", scheme: sequence(["ip", "count"]), delete: true);
@@ -71,7 +71,7 @@ try
             sink(name: "bytes", tap: bytes)
             sink(name: "ip", tap: ip)
             sink(name: "referrer", tap: referrer)
-            sink(name: "404", tap: ret404)
+            sink(name: "notfound", tap: ret404)
           }
 
           assembly("counter")
@@ -84,12 +84,16 @@ try
 
               branch("success")
                 {
-                  filter(args: ["status"], pattern: "(200)|(304)")
+                  filter(args: ["status"], pattern: /(200)|(304)/)
+
+                  assertMatches(args: ["status"], level: STRICT, pattern: /404/, negateMatch: true)
 
                   branch("bytes")
                     {
                       // force - to be zero for summing
                       replaceAll(args: ["size"], decl: ["clean_size"], pattern: "-", replacement: "0", res: ["url", "clean_size"])
+
+                      assertExpression(args: ["clean_size"], level: STRICT, expression: "clean_size >= 0", types: [long.class])
 
                       group(groupBy: ["url"])
 
@@ -127,7 +131,7 @@ try
                     }
                 }
 
-              branch("404")
+              branch("notfound")
                 {
                   filter(args: ["status"], pattern: "404")
 
@@ -146,13 +150,13 @@ try
             source(name: "bytes", tap: bytes)
             source(name: "ip", tap: ip)
             source(name: "referrer", tap: referrer)
-            source(name: "404", tap: ret404)
+            source(name: "notfound", tap: ret404)
 
             sink(name: "articles", path: output + "/top_articles", scheme: text(), delete: true)
             sink(name: "bytes", path: output + "/top_bytes", scheme: text(), delete: true)
             sink(name: "ip", path: output + "/top_ip", scheme: text(), delete: true)
             sink(name: "referrer", path: output + "/top_referrer", scheme: text(), delete: true)
-            sink(name: "404", path: output + "/top_404", scheme: text(), delete: true)
+            sink(name: "notfound", path: output + "/top_404", scheme: text(), delete: true)
           }
 
           assembly("reporter")
@@ -177,7 +181,7 @@ try
                   sort(["count"], reverse: true)
                 }
 
-              assembly("404")
+              assembly("notfound")
                 {
                   sort(["count"], reverse: true)
                 }

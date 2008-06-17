@@ -127,9 +127,48 @@ class FlowTest extends GroovyTestCase
     verifySinks(flow, 1)
   }
 
+  void testAssertAndTrap()
+  {
+    def builder = new CascadingBuilder();
+
+    Flow flow = builder.flow("grep")
+      {
+        source(inputFileApache)
+
+        filter(/.*88.*/)
+        assertMatches(level: STRICT, pattern: /.*1111.*/) // guaranteed to fail
+
+        sink(outputPath + "assert", delete: true)
+        trap(outputPath + "assertTrap", delete: true)
+      }
+
+    flow.complete()
+
+    verifySinks(flow, 0)
+    verifyTraps(flow, 1)
+  }
+
   private def verifySinks(Flow flow, int size, String match = ".*")
   {
     return flow.sinks.values().each {tap ->
+
+      println tap
+
+      assertTrue(flow.tapPathExists(tap))
+
+      def count = 0
+      flow.openTapForRead(tap).each {tuple ->
+        assertTrue(tuple.toString().matches(match));
+        count++;
+      }
+
+      assertEquals(size, count)
+    }
+  }
+
+  private def verifyTraps(Flow flow, int size, String match = ".*")
+  {
+    return flow.traps.values().each {tap ->
 
       println tap
 

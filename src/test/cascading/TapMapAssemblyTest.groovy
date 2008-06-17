@@ -152,6 +152,14 @@ class TapMapAssemblyTest extends GroovyTestCase
                 text()
               }
           }
+
+        trap(name: "path")
+          {
+            lfs("output/path", delete: true)
+              {
+                text()
+              }
+          }
       };
 
     print map;
@@ -209,6 +217,9 @@ class TapMapAssemblyTest extends GroovyTestCase
         sink(name: "path1", path: "file://output/path", scheme: text())
         sink(name: "path2", path: "file://output/path", scheme: text())
         sink(name: "path3", path: "file://output/path", scheme: text())
+
+        trap(name: "path1", path: "file://output/path", scheme: text())
+
       };
 
     print map;

@@ -36,6 +36,7 @@ public class TapMap
   String name;
   Map<String, Tap> sources = new HashMap<String, Tap>();
   Map<String, Tap> sinks = new HashMap<String, Tap>();
+  Map<String, Tap> traps = new HashMap<String, Tap>();
 
   public TapMap()
     {
@@ -107,8 +108,39 @@ public class TapMap
     return sinks.values().iterator().next();
     }
 
+  public Map<String, Tap> getTraps()
+    {
+    return traps;
+    }
+
+  public void setTraps( Map<String, Tap> traps )
+    {
+    this.traps = traps;
+    }
+
+  public void addTrap( String name, Tap tap )
+    {
+    if( traps.containsKey( name ) )
+      throw new RuntimeException( "cannot accept duplicate tap names: " + name );
+
+    traps.put( name, tap );
+    }
+
+  public Tap getTrap( String name )
+    {
+    return traps.get( name );
+    }
+
+  public Tap getTrap()
+    {
+    return traps.values().iterator().next();
+    }
+
   public String toString()
     {
-    return "TapMap{" + "name='" + name + '\'' + ", sources=" + sources + ", sinks=" + sinks + '}';
+    if( traps.isEmpty() )
+      return "TapMap{" + "name='" + name + '\'' + ", sources=" + sources + ", sinks=" + sinks + '}';
+    else
+      return "TapMap{" + "name='" + name + '\'' + ", sources=" + sources + ", sinks=" + sinks + ", traps=" + traps + '}';
     }
   }

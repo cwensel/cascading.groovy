@@ -38,7 +38,8 @@ public class EndPointFactory extends BaseFactory
     {
     Scheme sourceScheme = null;
 
-    if( type.equals( "sink" ) && builder.getCurrent() instanceof FlowFactory.FlowHolder ) // find source
+    // we inherit the source scheme by default
+    if( ( type.equals( "sink" ) || type.equals( "trap" ) ) && builder.getCurrent() instanceof FlowFactory.FlowHolder ) // find source
       {
       TapMap tapMap = ( (FlowFactory.FlowHolder) builder.getCurrent() ).map;
 
@@ -137,6 +138,8 @@ public class EndPointFactory extends BaseFactory
         tapMap.addSource( name, tap );
       else if( getType().equalsIgnoreCase( "sink" ) )
         tapMap.addSink( name, tap );
+      else if( getType().equalsIgnoreCase( "trap" ) )
+        tapMap.addTrap( name, tap );
       else
         throw new RuntimeException( "unknown endpoint type: " + getType() );
       }
