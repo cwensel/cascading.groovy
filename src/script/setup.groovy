@@ -30,8 +30,6 @@ File groovyLib = new File(groovyHome, "lib");
 
 println "  installing to: ${groovyHome}"
 
-File groovyProfile = new File(groovyHome, 'groovysh.profile')
-
 def ant = new AntBuilder()
 
 groovyLib.mkdirs();

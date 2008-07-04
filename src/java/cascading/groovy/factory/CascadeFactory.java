@@ -88,7 +88,7 @@ public class CascadeFactory extends BaseFactory
 
     public void handleParent( Object parent )
       {
-      //To change body of implemented methods use File | Settings | File Templates.
+
       }
 
     private void renderFlows()

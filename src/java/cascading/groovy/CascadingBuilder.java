@@ -21,6 +21,8 @@
 
 package cascading.groovy;
 
+import java.util.Properties;
+
 import cascading.groovy.factory.AssemblyFactory;
 import cascading.groovy.factory.BaseHolder;
 import cascading.groovy.factory.CascadeFactory;
@@ -83,8 +85,16 @@ public class CascadingBuilder extends FactoryBuilderSupport
   public static final AssertionLevel VALID = AssertionLevel.VALID;
   public static final AssertionLevel NONE = AssertionLevel.NONE;
 
+  private Properties properties;
+
   public CascadingBuilder()
     {
+    registerFactories();
+    }
+
+  public CascadingBuilder( Properties properties )
+    {
+    this.properties = properties;
     registerFactories();
     }
 
@@ -130,7 +140,7 @@ public class CascadingBuilder extends FactoryBuilderSupport
     // Flow
     registerFactory( "call", new CascadeFactory( "default" ) );
     registerFactory( "cascade", new CascadeFactory() );
-    registerFactory( "flow", new FlowFactory() );
+    registerFactory( "flow", new FlowFactory( properties ) );
 
     // Assembly
     registerFactory( "assembly", new AssemblyFactory() );

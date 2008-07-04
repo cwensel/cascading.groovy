@@ -25,18 +25,51 @@ import cascading.groovy.startup.LoadHadoop
 
 class Cascading
 {
+  // JobConf config data
+  static Map defaultConfiguration;
 
   static {
     new LoadHadoop().register()
   }
 
+  private Properties defaultProperties = new Properties();
+
   Cascading()
   {
   }
 
+  Cascading(String jarPath)
+  {
+    this(["mapred.jar": jarPath]);
+  }
+
+  Cascading(Map props)
+  {
+    props.each {key, value ->
+      defaultProperties.setProperty(key, value.toString());
+    }
+  }
+
   CascadingBuilder builder()
   {
-    return new CascadingBuilder();
+    return new CascadingBuilder(defaultProperties);
+  }
+
+  static Map getDefaultConfiguration()
+  {
+    if( defaultConfiguration != null )
+      return defaultConfiguration;
+
+    def JobConfClass = Class.forName("org.apache.hadoop.mapred.JobConf");
+    def jobConf = JobConfClass.newInstance();
+
+    defaultConfiguration = [:];
+
+    jobConf.iterator().each {entry ->
+      defaultConfiguration[ entry.key ] = jobConf.get(entry.key);
+    }
+
+    return defaultConfiguration;
   }
 
   void disableLogging()

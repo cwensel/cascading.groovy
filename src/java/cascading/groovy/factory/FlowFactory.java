@@ -22,6 +22,7 @@
 package cascading.groovy.factory;
 
 import java.util.Map;
+import java.util.Properties;
 
 import cascading.flow.Flow;
 import cascading.flow.FlowConnector;
@@ -33,19 +34,23 @@ import groovy.util.FactoryBuilderSupport;
  */
 public class FlowFactory extends BaseFactory
   {
-  public FlowFactory()
+  private final Properties properties;
+
+  public FlowFactory( Properties properties )
     {
+    this.properties = properties;
     }
 
   public Object newInstance( FactoryBuilderSupport builder, Object type, Object value, Map attributes ) throws InstantiationException, IllegalAccessException
     {
     rename( attributes, "assertionLevel", "level" );
 
-    return new FlowHolder( (String) type, (String) value );
+    return new FlowHolder( properties, (String) type, (String) value );
     }
 
   public static class FlowHolder extends BaseHolder
     {
+    private final Properties properties;
     String name;
     boolean skipIfSinkExists = false;
     AssemblyFactory.Assembly assembly = new AssemblyFactory.Assembly();
@@ -54,9 +59,10 @@ public class FlowFactory extends BaseFactory
 
     Flow flow;
 
-    public FlowHolder( String type, String name )
+    public FlowHolder( Properties properties, String type, String name )
       {
       super( type );
+      this.properties = properties;
       this.name = name;
       this.assembly.name = name;
       }
@@ -105,7 +111,7 @@ public class FlowFactory extends BaseFactory
       if( flow != null )
         return flow;
 
-      FlowConnector flowConnector = new FlowConnector();
+      FlowConnector flowConnector = new FlowConnector( properties );
 
       if( assertionLevel != null )
         flowConnector.setAssertionLevel( assertionLevel );

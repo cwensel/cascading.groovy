@@ -40,19 +40,17 @@ class LoadHadoop
     if( hadoopBuild.exists() )
     {
       loadJarsInDir(hadoopBuild, loader, '.*-core\\.jar$')
-    }
-    else
+    } else
     {
       loadJarsInDir(hadoopHome, loader, '.*-core\\.jar$')
     }
 
     def confdir
 
-    if( System.getenv('HADOOP_CONF') )
+    if( System.getenv('HADOOP_CONF_DIR') )
     {
-      confdir = new File(System.getenv('HADOOP_CONF'))
-    }
-    else
+      confdir = new File(System.getenv('HADOOP_CONF_DIR'))
+    } else
     {
       confdir = new File(System.getenv('HADOOP_HOME'), 'conf')
     }
