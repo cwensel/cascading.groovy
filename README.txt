@@ -18,6 +18,10 @@ General Information:
 
   See the included samples to get started.
 
+  To run, you may first need to increase jvm memory options (this is especially true with Hadoop >= 0.17)
+
+   $ export JAVA_OPTS=-Xmx512m
+
 
 License:
 
