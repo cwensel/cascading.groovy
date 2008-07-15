@@ -111,10 +111,9 @@ public class FlowFactory extends BaseFactory
       if( flow != null )
         return flow;
 
-      FlowConnector flowConnector = new FlowConnector( properties );
+      FlowConnector.setAssertionLevel( properties, assertionLevel );
 
-      if( assertionLevel != null )
-        flowConnector.setAssertionLevel( assertionLevel );
+      FlowConnector flowConnector = new FlowConnector( properties );
 
       if( map.getTraps().size() == 0 )
         {

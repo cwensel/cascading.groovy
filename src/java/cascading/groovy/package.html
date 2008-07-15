@@ -61,6 +61,13 @@ Cascade cascade = builder("cascade name")
   }
 </pre>
 
+To pass properties to Hadoop and/or the internal planners:
+<pre>
+  def props = ["mapred.jar": "some-custom.jar", "mapred.map.tasks": 20, "mapred.reduce.tasks": 20]
+  def cascading = new Cascading(props)
+  def builder = cascading.builder();
+</pre>
+
 <h2>Examples</h2>
 
 <p>Nested assembly of '{@link cascading.tap.Tap} maps' and {@link cascading.pipe.Pipe} assemblies.</p>
@@ -115,7 +122,7 @@ Cascade cascade = builder("cut cascade")
                }
            }
 
-//        trap(name: "cut")  // optional sink to capture bad data
+//        trap(name: "cut")  // optional trap to capture bad data
 //          {
 //            hfs(outputPath + "cut-sort-full-trap", delete: true)
 //              {
@@ -165,7 +172,7 @@ Additionally, within the eachTuple and everyGroup closure, user custom classes c
     {@link cascading.operation.AssertionLevel} 'level'.
   </li>
   <li><strong>flow</strong> - Create a new {@link cascading.flow.Flow}. Expects 'name' and optionally an
-    {@link cascading.operation.AssertionLevel} 'level'.
+    {@link cascading.operation.AssertionLevel} 'assertionLevel' (or just 'level').
   </li>
 </ul>
 

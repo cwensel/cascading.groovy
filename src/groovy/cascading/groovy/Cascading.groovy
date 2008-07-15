@@ -38,11 +38,6 @@ class Cascading
   {
   }
 
-  Cascading(String jarPath)
-  {
-    this(["mapred.jar": jarPath]);
-  }
-
   Cascading(Map props)
   {
     props.each {key, value ->
