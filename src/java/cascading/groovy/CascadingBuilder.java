@@ -150,7 +150,7 @@ public class CascadingBuilder extends FactoryBuilderSupport
     registerFactory( "operation", new OperationFactory() );
 
     registerFactory( "group", new GroupFactory() );
-    registerFactory( "sort", new GroupFactory() );
+//    registerFactory( "sort", new GroupFactory() );
     registerFactory( "join", new GroupFactory() );
 
     //   operations

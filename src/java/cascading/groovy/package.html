@@ -164,6 +164,19 @@ Additionally, within the eachTuple and everyGroup closure, user custom classes c
    }
 </pre>
 
+<p/>
+
+<h2>Troubleshooting</h2>
+
+Hadoop and Groovy have a tendency to consume Exceptions leaving the user a bit flumoxed. The most common failure
+not 'cluster' related is an OutOfMemoryException.
+
+<p/>
+
+It may be prudent to set <code>JAVA_OPTS="-Xmx512m"</code> so that the groovy interpreter will have enough memory
+to execute Hadoop.
+
+
 <h2>Language Reference</h2>
 
 <h3>Core components:</h3>
@@ -214,7 +227,7 @@ Additionally, within the eachTuple and everyGroup closure, user custom classes c
 
 <h3>Group and Join support:</h3>
 <ul>
-  <li><strong>group</strong>/<strong>sort</strong> - Create a new {@link cascading.pipe.GroupBy}. Accepts 'groupBy' and
+  <li><strong>group</strong> - Create a new {@link cascading.pipe.GroupBy}. Accepts 'groupBy' and
     'sortBy' fields.
   </li>
   <li><strong>join</strong> - Create a new {@link cascading.pipe.CoGroup}. Accepts 'groupBy' and 'declared' fields.</li>

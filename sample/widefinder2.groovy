@@ -163,27 +163,27 @@ try
             {
               assembly("articles")
                 {
-                  sort(["count"], reverse: true)
+                  group(["count"], reverse: true)
                 }
 
               assembly("bytes")
                 {
-                  sort(["bytes"], reverse: true)
+                  group(["bytes"], reverse: true)
                 }
 
               assembly("ip")
                 {
-                  sort(["count"], reverse: true)
+                  group(["count"], reverse: true)
                 }
 
               assembly("referrer")
                 {
-                  sort(["count"], reverse: true)
+                  group(["count"], reverse: true)
                 }
 
               assembly("notfound")
                 {
-                  sort(["count"], reverse: true)
+                  group(["count"], reverse: true)
                 }
             }
         }
