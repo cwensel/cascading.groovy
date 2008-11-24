@@ -33,8 +33,8 @@
   <property name="cascading.groovy.release.version" value="x.y.z"/>
 
   <!-- these are optional, only used if you uncomment the project.class.path filesets below -->
-  <property name="hadoop.root" location="${basedir}/../hadoop"/>
-  <property name="hadoop.lib" location="${hadoop.root}/lib"/>
+  <property name="hadoop.home" location="${basedir}/../hadoop"/>
+  <property name="hadoop.lib" location="${hadoop.home}/lib"/>
 
 
   <property name="groovy.root" location="${env.GROOVY_HOME}"/>
@@ -43,21 +43,27 @@
   <property name="groovy.user.lib" location="${groovy.user}/lib"/>
 
   <!-- assumes Cascading shares the same parent directory, change if necessary -->
-  <property name="cascading.root" location="${basedir}/../cascading"/>
-  <property file="${cascading.root}/version.properties"/>
+  <property name="cascading.home" location="${basedir}/../cascading"/>
+  <property file="${cascading.home}/version.properties"/>
   <property name="cascading.release.version" value="x.y.z"/>
-  <property name="cascading.all.filename" value="cascading-${cascading.release.version}.jar"/>
-  <property name="cascading.filename" value="cascading-lib-${cascading.release.version}.jar"/>
-  <property name="cascading.libs" value="${cascading.root}/lib"/>
+  <property name="cascading.filename.all" value="cascading-${cascading.release.version}.jar"/>
+  <property name="cascading.filename.core" value="cascading-core-${cascading.release.version}.jar"/>
+  <property name="cascading.filename.xml" value="cascading-xml-${cascading.release.version}.jar"/>
+  <property name="cascading.libs" value="${cascading.home}/lib"/>
+  <property name="cascading.libs.core" value="${cascading.libs}"/>
+  <property name="cascading.libs.xml" value="${cascading.libs}/xml"/>
 
-  <condition property="cascading.lib" value="${cascading.root}/${cascading.filename}"
-             else="${cascading.root}/build/${cascading.filename}">
-    <available file="${cascading.root}/${cascading.filename}"/>
+  <condition property="cascading.path" value="${cascading.home}/"
+             else="${cascading.home}/build">
+    <available file="${cascading.home}/${cascading.filename.core}"/>
   </condition>
 
-  <condition property="cascading.all.lib" value="${cascading.root}/${cascading.all.filename}"
-             else="${cascading.root}/build/${cascading.all.filename}">
-    <available file="${cascading.root}/${cascading.all.filename}"/>
+  <property name="cascading.lib.core" value="${cascading.path}/${cascading.filename.core}"/>
+  <property name="cascading.lib.xml" value="${cascading.path}/${cascading.filename.xml}"/>
+
+  <condition property="cascading.all.lib" value="${cascading.home}/${cascading.filename.all}"
+             else="${cascading.home}/build/${cascading.filename.all}">
+    <available file="${cascading.home}/${cascading.filename.all}"/>
   </condition>
 
   <property name="src.java" location="${basedir}/src/java"/>
@@ -68,7 +74,7 @@
   <available file="${src.java}" type="dir" property="main.available"/>
   <available file="${src.test}" type="dir" property="test.available"/>
 
-  <property name="conf.dir" location="${hadoop.root}/conf"/>
+  <property name="conf.dir" location="${hadoop.home}/conf"/>
 
   <property name="lib.dir" location="${basedir}/lib"/>
   <property name="sample.dir" location="${basedir}/sample"/>
@@ -87,7 +93,8 @@
   <path id="project.class.path">
     <pathelement location="${build.classes}"/>
     <pathelement location="${build.test}"/>
-    <pathelement location="${cascading.lib}"/>
+    <pathelement location="${cascading.lib.core}"/>
+    <pathelement location="${cascading.lib.xml}"/>
 
     <fileset dir="${lib.dir}">
       <include name="*.jar"/>
@@ -101,11 +108,11 @@
       <include name="*.jar"/>
     </fileset>
 
-    <fileset dir="${hadoop.root}">
+    <fileset dir="${hadoop.home}">
       <include name="*-core.jar"/>
     </fileset>
 
-    <fileset dir="${hadoop.root}/build">
+    <fileset dir="${hadoop.home}/build" erroronmissingdir="false">
       <include name="*-core.jar"/>
     </fileset>
 
@@ -141,7 +148,7 @@
     <taskdef name="groovyc" classname="org.codehaus.groovy.ant.Groovyc" classpathref="project.class.path"/>
 
     <echo message="building..."/>
-    <echo message="using cascading lib: ${cascading.lib}"/>
+    <echo message="using cascading lib: ${cascading.all.lib}"/>
     <mkdir dir="${build.classes}"/>
     <mkdir dir="${build.test}"/>
     <mkdir dir="${lib.dir}"/>
@@ -210,9 +217,11 @@
   <target name="jar" depends="build" description="creates a Hadoop ready jar will all dependencies">
 
     <!-- copy Cascading classes and libraries -->
-    <copy todir="${build.classes}/lib" file="${cascading.lib}"/>
+    <copy todir="${build.classes}/lib" file="${cascading.lib.core}"/>
+    <copy todir="${build.classes}/lib" file="${cascading.lib.xml}"/>
     <copy todir="${build.classes}/lib">
-      <fileset dir="${cascading.libs}" includes="*.jar"/>
+      <fileset dir="${cascading.libs.core}" includes="*.jar"/>
+      <fileset dir="${cascading.libs.xml}" includes="*.jar"/>
     </copy>
 
 

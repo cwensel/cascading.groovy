@@ -74,7 +74,7 @@ public class CascadingBuilder extends FactoryBuilderSupport
   {
   public static final Fields UNKNOWN = Fields.UNKNOWN;
   public static final Fields ALL = Fields.ALL;
-  public static final Fields KEYS = Fields.KEYS;
+  public static final Fields GROUP = Fields.GROUP;
   public static final Fields VALUES = Fields.VALUES;
   public static final Fields ARGS = Fields.ARGS;
   public static final Fields RESULTS = Fields.RESULTS;

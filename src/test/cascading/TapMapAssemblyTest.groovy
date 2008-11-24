@@ -199,8 +199,8 @@ class TapMapAssemblyTest extends GroovyTestCase
     assertTrue("not sequence", map.sources[ "path1" ].scheme instanceof SequenceFile);
     assertTrue("not text", map.sinks[ "path1" ].scheme instanceof TextLine);
 
-    assertTrue("not delete", map.sources[ "path1" ].deleteOnSinkInit);
-    assertTrue("is delete", !map.sinks[ "path1" ].deleteOnSinkInit);
+    assertTrue("not delete", map.sources[ "path1" ].replace);
+    assertTrue("is delete", !map.sinks[ "path1" ].replace);
 
   }
 
@@ -234,8 +234,8 @@ class TapMapAssemblyTest extends GroovyTestCase
     assertTrue("not sequence", map.sources[ "path1" ].scheme instanceof SequenceFile);
     assertTrue("not text", map.sinks[ "path1" ].scheme instanceof TextLine);
 
-    assertTrue("is delete", !map.sources[ "path1" ].deleteOnSinkInit); // irrelevant, not a sink
-    assertTrue("is delete", !map.sinks[ "path1" ].deleteOnSinkInit);
+    assertTrue("is delete", !map.sources[ "path1" ].replace); // irrelevant, not a sink
+    assertTrue("is delete", !map.sinks[ "path1" ].replace);
 
   }
 
