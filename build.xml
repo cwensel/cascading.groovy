@@ -268,7 +268,11 @@
         <include name="*.jar"/>
       </fileset>
 
-      <fileset dir="${cascading.libs}">
+      <fileset dir="${cascading.libs.core}">
+        <include name="*.jar"/>
+      </fileset>
+
+      <fileset dir="${cascading.libs.xml}">
         <include name="*.jar"/>
       </fileset>
 
