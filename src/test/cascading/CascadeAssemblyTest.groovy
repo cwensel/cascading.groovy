@@ -41,7 +41,7 @@ class CascadeAssemblyTest extends GroovyTestCase
       {
         eachTuple(args: ["f1"], res: ["f1", "g1"])
           {
-            regexParser(decl: ["g1"], pattern: /.*/, groups: [0, 1])
+            regexParser(decl: ["g1"], pattern: /.*/, groups: [0])
           }
 
         group(["f1"])
@@ -94,7 +94,7 @@ class CascadeAssemblyTest extends GroovyTestCase
               {
                 eachTuple(args: ["f1"], res: ["f1", "g1"])
                   {
-                    regexParser(decl: ["g1"], pattern: /.*/, groups: [0, 1])
+                    regexParser(decl: ["g1"], pattern: /.*/, groups: [0])
                   }
 
                 group(["f1"])
@@ -146,7 +146,7 @@ class CascadeAssemblyTest extends GroovyTestCase
 
             assembly()
               {
-                regexParser(args: ["f1"], res: ["f1", "g1"], decl: ["g1"], pattern: /.*/, groups: [0, 1])
+                regexParser(args: ["f1"], res: ["f1", "g1"], decl: ["g1"], pattern: /.*/, groups: [0])
 
                 group(by: ["f1"], sort: ["g1"])
 
@@ -169,7 +169,7 @@ class CascadeAssemblyTest extends GroovyTestCase
           {
             source(path: "input/path", delete: true, fields: ["f1"])
 
-            regexParser(args: ["f1"], res: ["f1", "g1"], decl: ["g1"], pattern: /.*/, groups: [0, 1])
+            regexParser(args: ["f1"], res: ["f1", "g1"], decl: ["g1"], pattern: /.*/, groups: [0])
             group(by: ["f1"], sort: ["g1"])
             sum(args: ["g1"], res: ["f1", "sum"])
 
@@ -191,7 +191,7 @@ class CascadeAssemblyTest extends GroovyTestCase
           {
             source(path: "input/path", fields: ["f1"])
 
-            regexParser(args: ["f1"], res: ["f1", "g1"], decl: ["g1"], pattern: /.*/, groups: [0, 1])
+            regexParser(args: ["f1"], res: ["f1", "g1"], decl: ["g1"], pattern: /.*/, groups: [0])
             group(by: ["f1"], sort: ["g1"])
             sum(args: ["g1"], res: ["f1", "sum"])
 
@@ -202,7 +202,7 @@ class CascadeAssemblyTest extends GroovyTestCase
           {
             source(path: "input/path2", fields: ["f1"])
 
-            regexParser(args: ["f1"], res: ["f1", "g1"], decl: ["g1"], pattern: /.*/, groups: [0, 1])
+            regexParser(args: ["f1"], res: ["f1", "g1"], decl: ["g1"], pattern: /.*/, groups: [0])
             group(by: ["f1"], sort: ["g1"])
             sum(args: ["g1"], res: ["f1", "sum"])
 
